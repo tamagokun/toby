@@ -9,7 +9,7 @@ class Base
 	protected $filters;
 	protected $errors;
 	
-	public function __construct($app)
+	public function __construct($app=null)
 	{
 		$this->app = $app;
 	}
