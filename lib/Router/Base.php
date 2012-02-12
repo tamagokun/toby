@@ -46,7 +46,7 @@ class Base
 		
 	}
 	
-	private function route!()
+	private function route()
 	{
 			
 	}
