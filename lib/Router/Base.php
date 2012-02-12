@@ -17,9 +17,11 @@ class Base
 	public function call($env)
 	{
 		$this->env = $env;
-		$this->request = new \Rackem\Request($env);
+		//$this->request = new \Rackem\Request($env);
 		$this->response = new \Rackem\Response();
-		$this->params = $this->request->params();
+		//if($this->app)
+		//	$this->response->append_app($this->app->call());
+		//$this->params = $this->request->params();
 		
 		$this->reponse->finish();
 	}
@@ -44,7 +46,7 @@ class Base
 		
 	}
 	
-	private function route()
+	private function route!()
 	{
 			
 	}
