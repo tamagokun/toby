@@ -54,9 +54,8 @@ class Base
 	
 	private function process_route($pattern,$keys,$route)
 	{
-		$path = $this->request_uri();
 		$matches = array();
-		if(!preg_match($pattern,$path,$matches)) return false;
+		if(!preg_match($pattern,$this->request_uri(),$matches)) return false;
 		//extract(array_combine($keys,array_shift($matches)));
 		$route(array_slice($matches,1));
 	}
