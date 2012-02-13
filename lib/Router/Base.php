@@ -18,10 +18,7 @@ class Base
 	{
 		$this->env = $env;
 		$this->request = new \Rackem\Request($env);
-		$this->response = new \Rackem\Response();
-		
-		//if($this->app)
-		//	$this->response->append_app($this->app->call());
+		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
 		//$this->params = $this->request->params();
 		$this->dispatch();
 		return $this->response->finish();
