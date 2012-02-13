@@ -39,13 +39,13 @@ class Base
 		try
 		{
 			//if( settings->static )
-			$this->filter("before");
-			$this->route();
+			$this->filters("before");
+			$this->routes();
 		}catch(Exception $e)
 		{
 			
 		}
-		$this->filter("after");
+		$this->filters("after");
 	}
 	
 	private function filters($where)
@@ -53,13 +53,25 @@ class Base
 		
 	}
 	
+	private function process_route($pattern,$keys,$route)
+	{
+		$path = $this->request->path();
+		$match = preg_match_all($pattern,$path);
+		if(count($match) < 2) return false;
+		$route();
+	}
+	
 	private function route($method,$path,$block,$options=array())
 	{
-		
+		$this->routes[] = new Route($method,$path,$block,$options);
 	}
 	
 	private function routes()
 	{
-			
+		foreach($this->routes as $route)
+		{
+			list($pattern,$keys) = $route->compile();
+			$this->process_route($pattern,$keys,$route);
+		}
 	}
 }
