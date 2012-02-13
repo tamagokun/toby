@@ -8,6 +8,7 @@ class Base
 	protected $routes;
 	protected $filters;
 	protected $errors;
+	protected $params;
 	
 	public function __construct($app=null)
 	{
@@ -19,7 +20,7 @@ class Base
 		$this->env = $env;
 		$this->request = new \Rackem\Request($env);
 		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
-		//$this->params = $this->request->params();
+		$this->params = $this->request->params();
 		$this->dispatch();
 		return $this->response->finish();
 	}
@@ -53,12 +54,20 @@ class Base
 	
 	private function process_route($pattern,$keys,$route)
 	{
-		$path = $this->request->path_info();
-		error_log($pattern."  ,  ".$path);
+		$path = $this->request_uri();
 		$matches = array();
 		if(!preg_match($pattern,$path,$matches)) return false;
 		//extract(array_combine($keys,array_shift($matches)));
 		$route(array_slice($matches,1));
+	}
+	
+	private function request_uri()
+	{
+		$path = $this->request->path_info();
+		//TODO: find a better way to handle old web servers
+		if($this->params['q']) $path = $this->params['q'];
+		if(empty($path)) $path = "/";
+		return $path;	
 	}
 	
 	private function route($method,$path,$block,$options=array())
