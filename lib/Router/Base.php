@@ -22,7 +22,7 @@ class Base
 		//if($this->app)
 		//	$this->response->append_app($this->app->call());
 		//$this->params = $this->request->params();
-		
+		$this->dispatch();
 		$this->reponse->finish();
 	}
 	
