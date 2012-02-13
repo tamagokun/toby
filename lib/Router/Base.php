@@ -17,19 +17,20 @@ class Base
 	public function call($env)
 	{
 		$this->env = $env;
-		//$this->request = new \Rackem\Request($env);
+		$this->request = new \Rackem\Request($env);
 		$this->response = new \Rackem\Response();
+		
 		//if($this->app)
 		//	$this->response->append_app($this->app->call());
 		//$this->params = $this->request->params();
 		$this->dispatch();
-		$this->reponse->finish();
+		return $this->response->finish();
 	}
 	
 	public function get($path)
 	{
 		$options = array_slice(func_get_args(),1);
-		$block = array_pop($block);
+		$block = array_pop($options);
 		$this->route("GET",$path,$block,$options);
 	}
 	
@@ -55,10 +56,12 @@ class Base
 	
 	private function process_route($pattern,$keys,$route)
 	{
-		$path = $this->request->path();
-		$match = preg_match_all($pattern,$path);
-		if(count($match) < 2) return false;
-		$route();
+		$path = $this->request->path_info();
+		error_log($pattern."  ,  ".$path);
+		$matches = array();
+		if(!preg_match($pattern,$path,$matches)) return false;
+		//extract(array_combine($keys,array_shift($matches)));
+		$route(array_slice($matches,1));
 	}
 	
 	private function route($method,$path,$block,$options=array())

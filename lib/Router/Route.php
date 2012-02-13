@@ -14,17 +14,16 @@ class Route
 		$this->options = $options;
 	}
 	
-	public function __invoke()
+	public function __invoke($args=array())
 	{
-		$block = $this->block;
-		return $block();
+		return call_user_func_array($this->block,$args);
 	}
 	
 	public function compile()
 	{
 		$keys = array();
-		$pattern = preg_replace_callback("[^\?\%\\\/\:\*\w]", function($c) { return $c; }, $this->path);
-		$pattern = preg_replace_callback("((:\w+)|\*)", function($match) use($keys) {
+		$pattern = preg_replace_callback('/[^\?\%\\/\:\*\w]/', function($c) { return Route::encoded($c); }, $this->path);
+		$pattern = preg_replace_callback('/(:(\w+)|\*)/', function($match) use(&$keys) {
 			if($match[0] == "*")
 			{
 				$keys[] = "splat";
@@ -33,6 +32,17 @@ class Route
 			$keys[] = $match[2];
 			return "([^/?#]+)";
 		}, $pattern);
-		return array($pattern, $keys);
+		return array("~^$pattern$~", $keys);
+	}
+	
+	public static function encoded($char)
+	{
+		$char = $char[0];
+		$enc = urlencode($char);
+		if($enc == $char)
+			$enc = "(?:".preg_quote($enc)."|".urlencode($char).")";
+		if($char == " ")
+			$enc = "(?:$enc|".Route::encoded("+").")";
+		return $enc;
 	}
 }
