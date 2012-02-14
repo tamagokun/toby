@@ -32,16 +32,17 @@ class Base
 		$this->route("GET",$path,$block,$options);
 	}
 	
-	public function text($template,$options=array(),$locals=array())	
+	public function php($template,$options=array(),$locals=array())	
 	{
-		return $this->render("txt",$template,$options,$locals);
+		return $this->render("php",$template,$options,$locals);
 	}
 	
 	//private
 	private function compile_template($engine,$data,$options,$views)
 	{
 		$template = $this->find_template($views,$data,$engine);
-		return new Template($template);
+		if($template) return new Template($template);
+		return false;	//500 no template
 	}
 	
 	private function dispatch()
@@ -66,8 +67,8 @@ class Base
 	private function find_template($views,$name,$engine)
 	{
 		$ext = Template::engine_extension($engine);
-		if(file_exists("$views/$name.$ext"))
-			return "$views/$name.$ext";
+		foreach($ext as $possible_ext)
+			if(file_exists("$views/$name.$possible_ext")) return "$views/$name.$possible_ext";
 		return false;
 	}
 	
@@ -82,13 +83,13 @@ class Base
 	private function render($engine,$data,$options=array(),$locals=array(),$block=null)
 	{
 		//gimme options
-		$layout = (isset($options["layout"]))? $options["layout"] : false;
+		$layout = (isset($options["layout"]))? $options["layout"] : "layout";
 		$layout_engine = (isset($options["layout_engine"]))? $options["layout_engine"] : $engine;
 		//create template
-		$views = "./views";
+		$views = __DIR__."/../../test/views";	//settings.views
 		$template = $this->compile_template($engine,$data,$options,$views);
 		$output = $template->render($locals,$block);
-		if($layout)
+		if($layout && is_null($block))
 			return $this->render($layout_engine,$layout,$options,$locals,$output);
 		return $output;
 	}
@@ -97,9 +98,9 @@ class Base
 	{
 		$path = $this->request->path_info();
 		//TODO: find a better way to handle old web servers
-		if($this->params['q']) $path = $this->params['q'];
+		if(isset($this->params['q'])) $path = $this->params['q'];
 		if(empty($path)) $path = "/";
-		return $path;	
+		return $path;
 	}
 	
 	private function route($method,$path,$block,$options=array())
