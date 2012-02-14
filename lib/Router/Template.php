@@ -21,7 +21,7 @@ class Template
 	public static function engine_extension($extension)
 	{
 		$extensions = array(
-			"php" => array("php","html"),
+			"php" => array("php","html","html.php"),
 			"markdown"	=> array("markdown","md"),
 		);
 		if(isset($extensions[$extension]))

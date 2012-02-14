@@ -88,7 +88,8 @@ class Base
 		//create template
 		$views = __DIR__."/../../test/views";	//settings.views
 		$template = $this->compile_template($engine,$data,$options,$views);
-		$output = $template->render($locals,$block);
+		$output = $block;
+		if($template) $output = $template->render($locals,$block);
 		if($layout && is_null($block))
 			return $this->render($layout_engine,$layout,$options,$locals,$output);
 		return $output;
