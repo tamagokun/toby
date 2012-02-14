@@ -32,7 +32,18 @@ class Base
 		$this->route("GET",$path,$block,$options);
 	}
 	
+	public function text($template,$options=array(),$locals=array())	
+	{
+		return $this->render("txt",$template,$options,$locals);
+	}
+	
 	//private
+	private function compile_template($engine,$data,$options,$views)
+	{
+		$template = $this->find_template($views,$data,$engine);
+		return new Template($template);
+	}
+	
 	private function dispatch()
 	{
 		try
@@ -52,12 +63,34 @@ class Base
 		
 	}
 	
+	private function find_template($views,$name,$engine)
+	{
+		$ext = Template::engine_extension($engine);
+		if(file_exists("$views/$name.$ext"))
+			return "$views/$name.$ext";
+		return false;
+	}
+	
 	private function process_route($pattern,$keys,$route)
 	{
 		$matches = array();
 		if(!preg_match($pattern,$this->request_uri(),$matches)) return false;
 		//extract(array_combine($keys,array_shift($matches)));
-		$route(array_slice($matches,1));
+		$this->response->write($route(array_slice($matches,1)));
+	}
+	
+	private function render($engine,$data,$options=array(),$locals=array(),$block=null)
+	{
+		//gimme options
+		$layout = (isset($options["layout"]))? $options["layout"] : false;
+		$layout_engine = (isset($options["layout_engine"]))? $options["layout_engine"] : $engine;
+		//create template
+		$views = "./views";
+		$template = $this->compile_template($engine,$data,$options,$views);
+		$output = $template->render($locals,$block);
+		if($layout)
+			return $this->render($layout_engine,$layout,$options,$locals,$output);
+		return $output;
 	}
 	
 	private function request_uri()
