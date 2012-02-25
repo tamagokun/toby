@@ -5,8 +5,13 @@ require '../router.php';
 
 $app = new \Router\Base();
 
-$app->get('/hello/:name',function($name) use ($app) {
-	return $app->php("testing",array(),array("name"=>$name));
+$app->get('/hello/:name/:place',function($app) {
+	return $app->pass();
+	return $app->php("testing",array(),array("name"=>$app->params->name,"place"=>$app->params->place));
+});
+
+$app->get('/hello/*',function($app) {
+	return "Something got passed, so I matched! YAY!";
 });
 
 \Rackem\Rack::run($app);

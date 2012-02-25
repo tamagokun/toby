@@ -14,9 +14,9 @@ class Route
 		$this->options = $options;
 	}
 	
-	public function __invoke($args=array())
+	public function __invoke()
 	{
-		return call_user_func_array($this->block,$args);
+		return call_user_func_array($this->block,func_get_args());
 	}
 	
 	public function compile()

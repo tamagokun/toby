@@ -3,13 +3,11 @@ namespace Router;
 
 class Base
 {
-	protected $app;
-	protected $conditions;
-	protected $routes;
-	protected $filters;
-	protected $errors;
-	protected $params;
+	public $params;
 	
+	protected $app,$conditions,$routes,$filters;
+	protected $errors;
+		
 	public function __construct($app=null)
 	{
 		$this->app = $app;
@@ -20,7 +18,7 @@ class Base
 		$this->env = $env;
 		$this->request = new \Rackem\Request($env);
 		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
-		$this->params = $this->request->params();
+		$this->params = (object) $this->request->params();
 		$this->dispatch();
 		return $this->response->finish();
 	}
@@ -30,6 +28,11 @@ class Base
 		$options = array_slice(func_get_args(),1);
 		$block = array_pop($options);
 		$this->route("GET",$path,$block,$options);
+	}
+	
+	public function pass()
+	{
+		return false;
 	}
 	
 	public function php($template,$options=array(),$locals=array())	
@@ -75,9 +78,11 @@ class Base
 	private function process_route($pattern,$keys,$route)
 	{
 		$matches = array();
-		if(!preg_match($pattern,$this->request_uri(),$matches)) return false;
-		//extract(array_combine($keys,array_shift($matches)));
-		$this->response->write($route(array_slice($matches,1)));
+		if(!preg_match_all($pattern,$this->request_uri(),$matches)) return false;		
+		$params = array_combine($keys,array_map(function($match) {return array_shift($match);},array_slice($matches,1)));
+		foreach($params as $key=>$value) $this->params->$key = $value;
+		if($output = $route($this)) $this->response->write($output);
+		return $output;
 	}
 	
 	private function render($engine,$data,$options=array(),$locals=array(),$block=null)
@@ -99,7 +104,7 @@ class Base
 	{
 		$path = $this->request->path_info();
 		//TODO: find a better way to handle old web servers
-		if(isset($this->params['q'])) $path = $this->params['q'];
+		if(isset($this->params->q)) $path = $this->params->q;
 		if(empty($path)) $path = "/";
 		return $path;
 	}
@@ -114,7 +119,7 @@ class Base
 		foreach($this->routes as $route)
 		{
 			list($pattern,$keys) = $route->compile();
-			$this->process_route($pattern,$keys,$route);
+			if($this->process_route($pattern,$keys,$route) !== false) return;
 		}
 	}
 }
