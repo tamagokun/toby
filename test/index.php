@@ -10,8 +10,15 @@ $app->get('/hello/:name/:place',function($app) {
 	return $app->php("testing",array(),array("name"=>$app->params->name,"place"=>$app->params->place));
 });
 
-$app->get('/hello/*',function($app) {
-	return "Something got passed, so I matched! YAY!";
-});
+class Testing
+{
+	public static function hello($app)
+	{
+		return $app->halt(404);
+		return "Something got passed, so I matched! YAY!";
+	}
+}
+
+$app->get('/hello/*',"Testing::hello");
 
 \Rackem\Rack::run($app);
