@@ -36,13 +36,17 @@ class Base
 		{
 			case 1:
 				$arg = array_shift(func_get_args());
-				if(is_int($arg)) $this->response->status = $arg;
-				elseif(is_string($arg)) $this->response->write($arg);
-				elseif(is_callable($arg)) $this->response->write($arg($this));
+				if(is_int($arg))
+				{
+					$this->response->status = $arg;
+					return;
+				}
+				elseif(is_string($arg)) return $arg;
+				elseif(is_callable($arg)) return $arg($this);
 				break;
 			case 2:
 				$this->response->status = array_shift(func_get_args());
-				$this->response->write(array_pop(func_get_args()));
+				return array_pop(func_get_args());
 				break;
 		}
 		return true;
