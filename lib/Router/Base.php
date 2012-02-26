@@ -32,24 +32,13 @@ class Base
 	
 	public function halt()
 	{
-		switch(func_num_args())
+		foreach(func_get_args() as $arg)
 		{
-			case 1:
-				$arg = array_shift(func_get_args());
-				if(is_int($arg))
-				{
-					$this->response->status = $arg;
-					return;
-				}
-				elseif(is_string($arg)) return $arg;
-				elseif(is_callable($arg)) return $arg($this);
-				break;
-			case 2:
-				$this->response->status = array_shift(func_get_args());
-				return array_pop(func_get_args());
-				break;
+			if(is_int($arg)) $this->response->status = $arg;
+			elseif(is_string($arg)) return $arg;
+			elseif(is_callable($arg)) return $arg($this);
 		}
-		return true;
+		return "";
 	}
 	
 	public function pass()
