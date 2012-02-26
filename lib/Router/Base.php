@@ -3,9 +3,9 @@ namespace Router;
 
 class Base
 {
-	public $params;
+	public $params,$env,$request,$response;
 	
-	protected $app,$conditions,$routes,$filters;
+	protected $app,$conditions,$routes,$filters,$settings;
 	protected $errors;
 		
 	public function __construct($app=null)
@@ -19,6 +19,7 @@ class Base
 		$this->request = new \Rackem\Request($env);
 		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
 		$this->params = (object) $this->request->params();
+		$this->defaults();
 		$this->dispatch();
 		return $this->response->finish();
 	}
@@ -46,6 +47,17 @@ class Base
 		return false;
 	}
 	
+	public function set($key,$value)
+	{
+		$this->settings->$key = $value;
+	}
+	
+	public function __get($prop) { return (isset($this->$prop))? $this->settings->$prop : null; }
+	public function __isset($prop) { return isset($this->settings->$prop); }
+	public function __set($prop,$value) { $this->set($prop,$value); }
+	public function __unset($prop) { unset($this->settings->$prop); }
+	
+	//template engines
 	public function php($template,$options=array(),$locals=array())	
 	{
 		return $this->render("php",$template,$options,$locals);
@@ -57,6 +69,14 @@ class Base
 		$template = $this->find_template($views,$data,$engine);
 		if($template) return new Template($template);
 		return false;	//500 no template
+	}
+	
+	private function defaults()
+	{
+		$this->settings = (object) array();
+		$this->set("root",dirname($this->env['SCRIPT_FILENAME']));
+		$this->set("views","{$this->root}/views");
+		$this->set("public_folder","{$this->root}/public");
 	}
 	
 	private function dispatch()
@@ -102,7 +122,7 @@ class Base
 		$layout = (isset($options["layout"]))? $options["layout"] : "layout";
 		$layout_engine = (isset($options["layout_engine"]))? $options["layout_engine"] : $engine;
 		//create template
-		$views = __DIR__."/../../test/views";	//settings.views
+		$views = $this->settings->views;
 		$template = $this->compile_template($engine,$data,$options,$views);
 		$output = $block;
 		if($template) $output = $template->render($locals,$block);
