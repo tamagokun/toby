@@ -3,6 +3,6 @@
 	<title>Woo!</title>
 </head>
 <body>
-	<?= $yield ?>
+	<?php echo $yield ?>
 </body>
 </html>
