@@ -11,6 +11,7 @@ class Base
 	public function __construct($app=null)
 	{
 		$this->app = $app;
+		$this->settings = (object) array();
 	}
 	
 	public function call($env)
@@ -19,9 +20,18 @@ class Base
 		$this->request = new \Rackem\Request($env);
 		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
 		$this->params = (object) $this->request->params();
-		$this->defaults();
+		$this->settings = (object) $this->defaults();
+		$this->configure_environment();
 		$this->dispatch();
 		return $this->response->finish();
+	}
+	
+	public function configure($block)
+	{
+		if(!isset($this->settings->configure)) $this->settings->configure = array();
+		$environment = (func_num_args() > 1)? array_shift(func_get_args()) : "all";
+		if(!isset($this->settings->configure[$environment])) $this->settings->configure[$environment] = array();
+		$this->settings->configure[$environment][] = array_pop(func_get_args());
 	}
 	
 	public function get($path)
@@ -71,12 +81,25 @@ class Base
 		return false;	//500 no template
 	}
 	
+	private function configure_environment()
+	{
+		if(!isset($this->settings->configure)) return;
+		foreach($this->settings->configure as $environment=>$blocks)
+		{
+			if($environment == "all" || $environment == $this->environment)
+				foreach($blocks as $block) $block($this);
+		}
+	}
+	
 	private function defaults()
 	{
-		$this->settings = (object) array();
-		$this->set("root",dirname($this->env['SCRIPT_FILENAME']));
-		$this->set("views","{$this->root}/views");
-		$this->set("public_folder","{$this->root}/public");
+		$root = dirname($this->env['SCRIPT_FILENAME']);
+		return array_merge(array(
+			"root" => $root,
+			"views" => "$root/views",
+			"public_folder" => "$root/public",
+			"environment" => ($this->env['RACK_ENV'])? $this->env['RACK_ENV'] : "development"
+		),(array)$this->settings);
 	}
 	
 	private function dispatch()

@@ -5,8 +5,13 @@ require '../router.php';
 
 $app = new \Router\Base();
 
+$app->configure(function($app) {
+	$app->set("public_folder","{$app->root}/lots_of_pooop");
+});
+
 $app->get('/hello/:name/:place',function($app) {
-	return $app->pass();
+	//return $app->pass();
+	$app->response->write($app->public_folder);
 	return $app->php("testing",array(),array("name"=>$app->params->name,"place"=>$app->params->place));
 });
 
