@@ -58,9 +58,27 @@ class Base
 		return false;
 	}
 	
+	public function redirect($uri)
+	{
+		if($this->env['HTTP_VERSION'] == 'HTTP/1.1' && $this->env['REQUEST_METHOD'] !== 'GET') $status = 303;
+		else $status = 302;
+		
+		$this->response->redirect($this->uri($uri),$status);
+		return $this->halt();
+	}
+	
 	public function set($key,$value)
 	{
 		$this->settings->$key = $value;
+	}
+	
+	public function uri($address,$absolute = true,$script_name = true)
+	{
+		$uri = array();
+		if($absolute) $uri[] = $this->request->base_url();
+		if($script_name) $uri[] = $this->env['SCRIPT_NAME'];
+		$uri[] = ($address)? $address : $this->request->path_info();
+		return implode("/",array_map(function($v) { return ltrim($v,'/'); },$uri));
 	}
 	
 	public function __get($prop) { return (isset($this->$prop))? $this->settings->$prop : null; }
