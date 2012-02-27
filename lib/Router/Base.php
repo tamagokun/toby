@@ -34,12 +34,13 @@ class Base
 		$this->settings->configure[$environment][] = array_pop(func_get_args());
 	}
 	
-	public function get($path)
-	{
-		$options = array_slice(func_get_args(),1);
-		$block = array_pop($options);
-		$this->route("GET",$path,$block,$options);
-	}
+	public function get($path) { $this->add_route("GET",func_get_args()); }
+	public function delete($path) { $this->add_route("DELETE",func_get_args()); }
+	public function head($path) { $this->add_route("HEAD",func_get_args()); }
+	public function options($path) { $this->add_route("OPTIONS",func_get_args()); }
+	public function patch($path) { $this->add_route("PATCH",func_get_args()); }
+	public function post($path) { $this->add_route("POST",func_get_args()); }
+	public function put($path) { $this->add_route("PUT",func_get_args()); }
 	
 	public function halt()
 	{
@@ -74,6 +75,13 @@ class Base
 	}
 	
 	//private
+	private function add_route($method, $args)
+	{
+		$path = array_shift($args);
+		$block = array_pop($args);
+		$this->route($method,$path,$block,$args);
+	}
+	
 	private function compile_template($engine,$data,$options,$views)
 	{
 		$template = $this->find_template($views,$data,$engine);
