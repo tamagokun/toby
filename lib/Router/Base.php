@@ -5,12 +5,12 @@ class Base
 {
 	public $params,$env,$request,$response;
 	
-	protected $app,$conditions,$routes,$filters,$settings;
-	protected $errors;
+	protected $app,$conditions,$routes,$filters,$settings,$errors;
 		
 	public function __construct($app=null)
 	{
 		$this->app = $app;
+		$this->errors = array();
 		$this->settings = (object) array();
 	}
 	
@@ -34,6 +34,12 @@ class Base
 		$this->settings->configure[$environment][] = array_pop(func_get_args());
 	}
 	
+	public function error($codes, $block=null)
+	{
+		$codes = is_array($codes)? $codes : array($codes);
+		foreach($codes as $code) $this->errors[$code] = $block;
+	}
+	
 	public function get($path) { $this->add_route("GET",func_get_args()); }
 	public function delete($path) { $this->add_route("DELETE",func_get_args()); }
 	public function head($path) { $this->add_route("HEAD",func_get_args()); }
@@ -53,6 +59,11 @@ class Base
 		return "";
 	}
 	
+	public function not_found($block=null)
+	{
+		$this->error(404,$block);
+	}
+	
 	public function pass()
 	{
 		return false;
@@ -70,6 +81,12 @@ class Base
 	public function set($key,$value)
 	{
 		$this->settings->$key = $value;
+	}
+	
+	public function status($value=null)
+	{
+		if(!is_null($value)) $this->response->status = $value;
+		return $this->response->status;
 	}
 	
 	public function uri($address,$absolute = true,$script_name = true)
@@ -135,9 +152,10 @@ class Base
 			//if( settings->static )
 			$this->filters("before");
 			$this->routes();
-		}catch(Exception $e)
+		}catch(\Exception $e)
 		{
-			
+			ob_end_clean();
+			return $this->response->write($this->handle_error($e));
 		}
 		$this->filters("after");
 	}
@@ -153,6 +171,15 @@ class Base
 		foreach($ext as $possible_ext)
 			if(file_exists("$views/$name.$possible_ext")) return "$views/$name.$possible_ext";
 		return false;
+	}
+	
+	private function handle_error($e)
+	{
+		$this->env['router.error'] = $e;
+		foreach($this->errors as $code=>$error)
+			if($code == $this->response->status || $code == get_class($e))
+				return is_callable($error)? $error($this) : $error;
+		return "";
 	}
 	
 	private function process_route($pattern,$keys,$route)
@@ -201,5 +228,7 @@ class Base
 			list($pattern,$keys) = $route->compile();
 			if($this->process_route($pattern,$keys,$route) !== false) return;
 		}
+		$this->status(404);
+		throw new \Exception('Not Found');
 	}
 }

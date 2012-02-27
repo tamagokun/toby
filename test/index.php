@@ -21,10 +21,21 @@ class Testing
 	public static function hello($app)
 	{
 		//return $app->halt(404);
+		throw new MyException('boom');
 		return "Something got passed, so I matched! YAY!";
 	}
 }
 
+class MyException extends Exception {}
+
 $app->get('/hello/*',"Testing::hello");
+
+$app->not_found(function($app) {
+	return "Doh!! I was not found :(";
+});
+
+$app->error('MyException',function($app) {
+	return "GAH!!!!!!!!!!!!!!!!!";
+});
 
 \Rackem\Rack::run($app);
