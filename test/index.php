@@ -13,7 +13,8 @@ $app->before(function($app) {
 	return "I run before joooooo!";
 });
 
-$app->before("/hello/*",function($app) {
+$app->before("/hello/*/*/*",function($app) {
+	$app->response->write($app->params->splat);
 	return "I only run on hello!";
 });
 
@@ -27,7 +28,7 @@ $app->get('/hello/:name/:place',function($app) {
 });
 
 $app->get('/',function($app) {
-	return "home page";
+	return random_function();
 });
 
 class Testing
@@ -38,6 +39,11 @@ class Testing
 		throw new MyException('boom');
 		return "Something got passed, so I matched! YAY!";
 	}
+}
+
+function random_function()
+{
+	return "DUDE, YEAH";
 }
 
 class MyException extends Exception {}
