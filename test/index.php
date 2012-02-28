@@ -9,6 +9,8 @@ $app->configure(function($app) {
 	$app->set("public_folder","{$app->root}/lots_of_pooop");
 });
 
+$app->condition("testing",function() { return true; });
+
 $app->get('/hello/:name/:place',function($app) {
 	//return $app->pass();
 	return $app->redirect("/hello/");
@@ -28,7 +30,7 @@ class Testing
 
 class MyException extends Exception {}
 
-$app->get('/hello/*',"Testing::hello");
+$app->get('/hello/*',array("testing"=>"sojfosdjfsdF"),"Testing::hello");
 
 $app->not_found(function($app) {
 	return "Doh!! I was not found :(";

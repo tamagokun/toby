@@ -3,15 +3,16 @@ namespace Router;
 
 class Route
 {
-	public $method,$path;
-	private $block,$options;
+	public $method,$path,$conditions;
+	private $block;
 	
-	public function __construct($method,$path,$block,$options=array())
+	public function __construct($method,$path,$block,$conditions=array())
 	{
 		$this->method = $method;
 		$this->path = $path;
 		$this->block = $block;
-		$this->options = $options;
+		$this->conditions = array();
+		foreach($conditions as $condition) $this->conditions = array_merge($this->conditions,$condition);
 	}
 	
 	public function __invoke()
