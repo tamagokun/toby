@@ -15,20 +15,22 @@ class Base
 		$this->settings = (object) array();
 	}
 	
-	public function add_filter($where,$block)
+	public function add_filter($where,$args)
 	{
+		$block = array_pop($args);
+		$path = ($args[0] && is_string($args[0]))? array_shift($args) : "*";
 		if(!isset($this->filters[$where])) $this->filters[$where] = array();
-		$this->filters[$where][] = $block;
+		$this->filters[$where][] = new Route(null,$path,$block,$args);
 	}
 	
 	public function after($block)
 	{
-		$this->add_filter("after",$block);
+		$this->add_filter("after",func_get_args());
 	}
 	
 	public function before($block)
 	{
-		$this->add_filter("before",$block);
+		$this->add_filter("before",func_get_args());
 	}
 	
 	public function call($env)
@@ -217,7 +219,14 @@ class Base
 	private function filters($where)
 	{
 		foreach($this->filters as $key=>$filter)
-			if($key == $where) foreach($filter as $block) $block($this);
+		{
+			if($where !== $key) continue;
+			foreach($filter as $route)
+			{
+				list($pattern,$keys) = $route->compile();
+				$this->process_route($pattern,$keys,$route);
+			}
+		}
 	}
 	
 	private function find_template($views,$name,$engine)
@@ -249,6 +258,7 @@ class Base
 	private function process_route($pattern,$keys,$route)
 	{
 		$matches = array();
+		if(!is_null($route->method) && $route->method != $this->request->request_method()) return false;
 		if(!preg_match_all($pattern,$this->request_uri(),$matches)) return false;
 		foreach($route->conditions as $condition=>$value) if(!$this->process_condition($condition,$value)) return false;
 		$params = array_combine($keys,array_map(function($match) {return array_shift($match);},array_slice($matches,1)));

@@ -9,6 +9,14 @@ $app->configure(function($app) {
 	$app->set("public_folder","{$app->root}/lots_of_pooop");
 });
 
+$app->before(function($app) {
+	return "I run before joooooo!";
+});
+
+$app->before("/hello/*",function($app) {
+	return "I only run on hello!";
+});
+
 $app->condition("testing",function() { return true; });
 
 $app->get('/hello/:name/:place',function($app) {
@@ -16,6 +24,10 @@ $app->get('/hello/:name/:place',function($app) {
 	return $app->redirect("/hello/");
 	$app->response->write($app->public_folder);
 	return $app->php("testing",array(),array("name"=>$app->params->name,"place"=>$app->params->place));
+});
+
+$app->get('/',function($app) {
+	return "home page";
 });
 
 class Testing
