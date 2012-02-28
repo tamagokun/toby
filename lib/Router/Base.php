@@ -34,6 +34,11 @@ class Base
 		$this->settings->configure[$environment][] = array_pop(func_get_args());
 	}
 	
+	public function back()
+	{
+		//return $this->request->referer();
+	}
+	
 	public function error($codes, $block=null)
 	{
 		$codes = is_array($codes)? $codes : array($codes);
@@ -52,11 +57,37 @@ class Base
 	{
 		foreach(func_get_args() as $arg)
 		{
-			if(is_int($arg)) $this->response->status = $arg;
-			elseif(is_string($arg)) return $arg;
-			elseif(is_callable($arg)) return $arg($this);
+			if(is_int($arg)) $this->status($arg);
+			elseif(is_string($arg)) $this->response->write($arg);
+			elseif(is_callable($arg)) $this->response->write($arg($this));
 		}
+		if($this->is_server_error() || $this->is_client_error()) throw new \Exception('Halt');
 		return "";
+	}
+	
+	public function is_informational()
+	{
+		return $this->status() >= 100 && $this->status() <= 199;
+	}
+	
+	public function is_success()
+	{
+		return $this->status() >= 200 && $this->status() <= 299;
+	}
+	
+	public function is_redirect()
+	{
+		return $this->status() >= 300 && $this->status() <= 399;
+	}
+	
+	public function is_client_error()
+	{
+		return $this->status() >= 400 && $this->status() <= 499;
+	}
+	
+	public function is_server_error()
+	{
+		return $this->status() >= 500 && $this->status() <= 599;
 	}
 	
 	public function not_found($block=null)
