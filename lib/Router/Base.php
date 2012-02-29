@@ -18,7 +18,7 @@ class Base
 	public function add_filter($where,$args)
 	{
 		$block = array_pop($args);
-		$path = ($args[0] && is_string($args[0]))? array_shift($args) : "*";
+		$path = (isset($args[0]) && is_string($args[0]))? array_shift($args) : "*";
 		if(!isset($this->filters[$where])) $this->filters[$where] = array();
 		$this->filters[$where][] = new Route(null,$path,$block,$args);
 	}
@@ -263,7 +263,7 @@ class Base
 		foreach($route->conditions as $condition=>$value) if(!$this->process_condition($condition,$value)) return false;
 		$params = array_combine($keys,array_map(function($match) {return array_shift($match);},array_slice($matches,1)));
 		foreach($params as $key=>$value) $this->params->$key = $value;
-		if($output = $route($this)) $this->response->write($output);
+		if($output = $route($this)) $this->response->send($output);
 		return $output;
 	}
 	
