@@ -172,6 +172,23 @@ class Base
 		$block = array_pop($args);
 		$this->route($method,$path,$block,$args);
 	}
+
+	private function build_params($keys,$matches)
+	{
+		$params = array();
+		$keys = array_values($keys);
+		foreach($keys as $index=>$key)
+		{
+			$match = array_shift($matches[$index]);
+			if(isset($params[$key]))
+			{
+				if(is_array($params[$key])) $params[$key][] = $match;
+				else $params[$key] = array($params[$key],$match);
+			}else
+				$params[$key] = $match;
+		}
+		return $params;
+	}
 	
 	private function compile_template($engine,$data,$options,$views)
 	{
@@ -261,7 +278,7 @@ class Base
 		if(!is_null($route->method) && $route->method != $this->request->request_method()) return false;
 		if(!preg_match_all($pattern,$this->request_uri(),$matches)) return false;
 		foreach($route->conditions as $condition=>$value) if(!$this->process_condition($condition,$value)) return false;
-		$params = array_combine($keys,array_map(function($match) {return array_shift($match);},array_slice($matches,1)));
+		$params = $this->build_params($keys,array_slice($matches,1));
 		foreach($params as $key=>$value) $this->params->$key = $value;
 		if($output = $route($this)) $this->response->send($output);
 		return $output;
