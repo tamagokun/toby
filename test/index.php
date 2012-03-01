@@ -10,7 +10,7 @@ $app->configure(function($app) {
 });
 
 $app->before(function($app) {
-	return "I run before joooooo!";
+	return throw new \Exception('boom');
 });
 
 $app->before("/hello/*/*/*",function($app) {
@@ -58,4 +58,5 @@ $app->error('MyException',function($app) {
 	return "GAH!!!!!!!!!!!!!!!!!";
 });
 
+\Rackem\Rack::use_middleware("\Router\ShowExceptions");
 \Rackem\Rack::run($app);
