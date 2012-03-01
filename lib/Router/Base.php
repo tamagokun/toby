@@ -61,7 +61,7 @@ class Base
 	
 	public function back()
 	{
-		//return $this->request->referer();
+		return $this->request->referer();
 	}
 	
 	public function error($codes, $block=null)
@@ -130,7 +130,7 @@ class Base
 		if($this->env['HTTP_VERSION'] == 'HTTP/1.1' && $this->env['REQUEST_METHOD'] !== 'GET') $status = 303;
 		else $status = 302;
 		
-		$this->response->redirect($this->uri($uri),$status);
+		$this->response->redirect($this->url($uri),$status);
 		return $this->halt();
 	}
 	
@@ -145,7 +145,7 @@ class Base
 		return $this->response->status;
 	}
 	
-	public function uri($address,$absolute = true,$script_name = true)
+	public function url($address,$absolute = true,$script_name = true)
 	{
 		$uri = array();
 		if($absolute) $uri[] = $this->request->base_url();
