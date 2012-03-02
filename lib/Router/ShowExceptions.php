@@ -70,9 +70,9 @@ class ShowExceptions extends \Rackem\Exceptions
 	h3 {text-shadow: 0 1px #fff;}
 	h2, h3 {padding: .5em 0;}
 	ul {list-style: none;}
-	#header {background:#F0B49E; padding: 10px 20px; border-top: 1px solid #f7d9ce; box-shadow: 0 1px 5px #bbb}
+	#header {background:#F0B49E; padding: 10px 20px; border-top: 1px solid #f7d9ce;}
 	#summary li {display:inline; padding: 0 10px 0 0;}
-	#main {padding: 10px 20px;}
+	#main {padding: 10px 20px; box-shadow: inset 0 1px 5px #bbb;}
 	#main p {padding: 10px 0; font-size: 0.786em; text-shadow: 0 1px #fff;}
 	#main ul {border:1px solid #e9e9e9; border-bottom: 0 none;}
 	#main li {font-size:0.858em; background: #ffffff;border-bottom:1px solid #e9e9e9;padding: 5px 0 5px 10px;}
