@@ -11,9 +11,7 @@ class ShowExceptions extends \Rackem\Exceptions
 		}catch(\Exception $e)
 		{
 			$this->handle_exception($env, $e);
-			$path = ($this->app->request)? $this->app->request->path_info() : "/";
-			$full_backtrace = $this->pretty_trace();
-			return array(500, array('Content-Type' => 'text/html'), $error_template);
+			return array(500, array('Content-Type' => 'text/html'), array($this->error_template($e)));
 		}
 	}
 
@@ -21,20 +19,24 @@ class ShowExceptions extends \Rackem\Exceptions
 	{
 		return "";
 	}
-}
 
-$error_template = <<<'TEMPLATE'
+	protected function error_template($e)
+	{
+		$exception = get_class($e);
+		$path = ($this->app->request)? $this->app->request->path_info() : "/";
+		$full_backtrace = $this->pretty_trace();
+		return <<<TEMPLATE
 <!doctype html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>{get_class($e)} at {$path}</title>
+	<title>{$exception} at {$path}</title>
 
 </head>
 <body>
 	<div id="wrap">
 		<div id="masthead">
-			<h1><strong>{get_class($e)}</strong> at <strong>{$path}</strong></h1>
+			<h1><strong>{$exception}</strong> at <strong>{$path}</strong></h1>
 			<h2>{$e->getMessage()}</h2>
 			<div id="summary">
 				<ul>
@@ -54,4 +56,5 @@ $error_template = <<<'TEMPLATE'
 </body>
 </html>
 TEMPLATE;
-?>
+	}
+}
