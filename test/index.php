@@ -10,7 +10,8 @@ $app->configure(function($app) {
 });
 
 $app->before(function($app) {
-	return throw new \Exception('boom');
+	throw new \Exception('boom');
+	return "";
 });
 
 $app->before("/hello/*/*/*",function($app) {

@@ -39,7 +39,7 @@ class Base
 		$this->request = new \Rackem\Request($env);
 		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
 		$this->params = (object) $this->request->params();
-		$this->settings = (object) $this->defaults();
+		$this->reset();
 		$this->configure_environment();
 		$this->dispatch();
 		return $this->response->finish();
@@ -113,6 +113,21 @@ class Base
 	public function is_server_error()
 	{
 		return $this->status() >= 500 && $this->status() <= 599;
+	}
+
+	public function is_development()
+	{
+		return $this->environment == "development";
+	}
+
+	public function is_production()
+	{
+		return $this->environment == "production";
+	}
+
+	public function is_test()
+	{
+		return $this->environment == "test";
 	}
 	
 	public function not_found($block=null)
@@ -211,6 +226,7 @@ class Base
 		}catch(\Exception $e)
 		{
 			ob_end_clean();
+			if($this->show_exceptions) throw $e;
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -243,7 +259,7 @@ class Base
 		foreach($this->errors as $code=>$error)
 			if($code == $this->response->status || $code == get_class($e))
 				return is_callable($error)? $error($this) : $error;
-		return "";
+		return array(500,"<h1>Internal Server Error</h1>");
 	}
 
 	private function param_list($keys,$matches)
@@ -302,6 +318,12 @@ class Base
 		if(isset($this->params->q)) $path = $this->params->q;
 		if(empty($path)) $path = "/";
 		return $path;
+	}
+
+	private function reset()
+	{
+		$this->settings = (object) $this->defaults();
+		if($this->is_development()) $this->set("show_exceptions",true);
 	}
 	
 	private function route($method,$path,$block,$conditions=array())
