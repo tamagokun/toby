@@ -1,7 +1,7 @@
 <?php
 
 require 'rackem/rackem.php';
-require '../router.php';
+require dirname(__FILE__).'/../router.php';
 
 $app = new \Router\Base();
 
