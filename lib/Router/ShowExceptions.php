@@ -53,8 +53,8 @@ class ShowExceptions extends \Rackem\Exceptions
 		$path = ($this->app->request)? $this->app->request->path_info() : "/";
 		$full_stack = $this->pretty_trace($e);
 		$env_stack = $this->pretty_array($env);
-		$get_stack = $this->pretty_array($env['rack.request.query_hash']);
-		$post_stack = $this->pretty_array($env['rack.request.form_hash']);
+		$get_stack = isset($env['rack.request.query_hash'])? $this->pretty_array($env['rack.request.query_hash']) : "";
+		$post_stack = isset($env['rack.request.form_hash'])? $this->pretty_array($env['rack.request.form_hash']) : "";
 		return <<<TEMPLATE
 <!doctype html>
 <html>

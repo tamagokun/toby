@@ -59,5 +59,6 @@ $app->error('MyException',function($app) {
 	return "GAH!!!!!!!!!!!!!!!!!";
 });
 
-\Rackem\Rack::use_middleware("\Router\ShowExceptions");
-\Rackem\Rack::run($app);
+//\Rackem\Rack::use_middleware("\Router\ShowExceptions");
+//\Rackem\Rack::run($app);
+$app->run();

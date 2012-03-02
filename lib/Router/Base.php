@@ -5,14 +5,16 @@ class Base
 {
 	public $params,$env,$request,$response;
 	
-	protected $app,$conditions,$routes,$filters,$settings,$errors;
+	protected $app,$conditions,$routes,$filters,$settings,$errors,$middleware;
 		
 	public function __construct($app=null)
 	{
 		$this->app = $app;
 		$this->errors = array();
 		$this->filters = array();
-		$this->settings = (object) array();
+		$this->middleware = array();
+		$this->settings = new \ArrayObject();
+		$this->reset();
 	}
 	
 	public function add_filter($where,$args)
@@ -148,6 +150,19 @@ class Base
 		$this->response->redirect($this->url($uri),$status);
 		return $this->halt();
 	}
+
+	public function run($rackem = "\Rackem\Rack")
+	{
+		if($this->show_exceptions) $rackem::use_middleware("\Router\ShowExceptions");
+		foreach($this->middleware as $middleware)
+			call_user_func_array("$rackem::use_middleware",$middleware);
+		$rackem::run($this);
+	}
+
+	public function safe_set($key, $value)
+	{
+		if(!isset($this->settings->$key)) $this->set($key,$value);
+	}
 	
 	public function set($key,$value)
 	{
@@ -167,6 +182,11 @@ class Base
 		if($script_name) $uri[] = $this->env['SCRIPT_NAME'];
 		$uri[] = ($address)? $address : $this->request->path_info();
 		return implode("/",array_map(function($v) { return ltrim($v,'/'); },$uri));
+	}
+
+	public function use_middleware($args)
+	{
+		$this->middleware[] = func_get_args();
 	}
 	
 	public function __get($prop) { return (isset($this->$prop))? $this->settings->$prop : null; }
@@ -203,17 +223,6 @@ class Base
 			if($environment == "all" || $environment == $this->environment)
 				foreach($blocks as $block) $block($this);
 		}
-	}
-	
-	private function defaults()
-	{
-		$root = dirname($this->env['SCRIPT_FILENAME']);
-		return array_merge(array(
-			"root" => $root,
-			"views" => "$root/views",
-			"public_folder" => "$root/public",
-			"environment" => ($this->env['RACK_ENV'])? $this->env['RACK_ENV'] : "development"
-		),(array)$this->settings);
 	}
 	
 	private function dispatch()
@@ -322,8 +331,11 @@ class Base
 
 	private function reset()
 	{
-		$this->settings = (object) $this->defaults();
-		if($this->is_development()) $this->set("show_exceptions",true);
+		$this->safe_set("environment",isset($_SERVER['RACK_ENV'])? $_SERVER['RACK_ENV'] : "development");
+		$this->safe_set("root", dirname($this->env['SCRIPT_FILENAME']));
+		$this->safe_set("views", "{$this->root}/views");
+		$this->safe_set("public_folder", "{$this->root}/public");
+		$this->safe_set("show_exceptions", $this->is_development());
 	}
 	
 	private function route($method,$path,$block,$conditions=array())
