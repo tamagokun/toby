@@ -67,47 +67,43 @@ class ShowExceptions extends \Rackem\Exceptions
 		color: #525252;}
 	code {font-family: 'Lucida Console', monospace;}
 	h2 {font-style:italic;}
+	h3 {text-shadow: 0 1px #fff;}
 	h2, h3 {padding: .5em 0;}
 	ul {list-style: none;}
-	#wrap {width:960px; margin: 20px auto; background:white; border:1px solid #ccc;border-radius:10px;padding:10px;}
-	#summary li {display:inline; padding: 0 10px;}
-	#backtrace ul {border:1px solid #e9e9e9; border-bottom: 0 none;}
-	#backtrace li {font-size:0.858em; background: #f7f7f7;border-bottom:1px solid #e9e9e9;padding: 5px 0 5px 10px;}
+	#header {background:#F0B49E; padding: 10px 20px; border-top: 1px solid #f7d9ce; box-shadow: 0 1px 5px #bbb}
+	#summary li {display:inline; padding: 0 10px 0 0;}
+	#main {padding: 10px 20px;}
+	#main p {padding: 10px 0; font-size: 0.786em; text-shadow: 0 1px #fff;}
+	#main ul {border:1px solid #e9e9e9; border-bottom: 0 none;}
+	#main li {font-size:0.858em; background: #ffffff;border-bottom:1px solid #e9e9e9;padding: 5px 0 5px 10px;}
 	table {border: 1px solid #e9e9e9; border-spacing: 0; border-bottom: 0 none; border-left: 0 none;}
-	table th, table td {font-size: 0.786em; padding: 3px 3px 3px 10px; 
+	table th, table td {font-size: 0.786em; padding: 3px 3px 3px 10px; background: #ffffff;
 		border: 1px solid #e9e9e9; border-top: 0 none; border-right: 0 none;}
 	table th {background: #f7f7f7;}
 </style>
 </head>
 <body>
-	<div id="wrap">
-		<div id="header">
-			<h1><strong>{$exception}</strong> at <strong>{$path}</strong></h1>
-			<h2>{$e->getMessage()}</h2>
-			<div id="summary">
-				<ul>
-					<li><strong>file:</strong> <code>{$e->getFile()}</code></li>
-					<li><strong>location:</strong> <code>in {$location}</code></li>
-					<li><strong>line:</strong> <code>{$e->getLine()}</code></li>
-				</ul>
-			</div>
+	<div id="header">
+		<h1><strong>{$exception}</strong> at <strong>{$path}</strong></h1>
+		<h2>{$e->getMessage()}</h2>
+		<div id="summary">
+			<ul>
+				<li><strong>file:</strong> <code>{$e->getFile()}</code></li>
+				<li><strong>location:</strong> <code>in {$location}</code></li>
+				<li><strong>line:</strong> <code>{$e->getLine()}</code></li>
+			</ul>
 		</div>
-		<div id="backtrace">
-			<h3>BACKTRACE</h3>
-			<ul>{$full_stack}</ul>
-		</div>
-		<div id="get">
-			<h3>GET</h3>
-			{$get_stack}
-		</div>
-		<div id="post">
-			<h3>POST</h3>
-			{$post_stack}
-		</div>
-		<div id="env">
-			<h3>ENVIRONMENT</h3>
-			{$env_stack}
-		</div>
+	</div>
+	<div id="main">
+		<h3>BACKTRACE</h3>
+		<ul>{$full_stack}</ul>
+		<h3>GET</h3>
+		{$get_stack}
+		<h3>POST</h3>
+		{$post_stack}
+		<h3>ENVIRONMENT</h3>
+		{$env_stack}
+		<p>You&#39;re seeing this error becuase you have enabled the <code>show_exceptions</code> setting.</p> 
 	</div>
 </body>
 </html>
