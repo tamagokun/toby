@@ -136,6 +136,11 @@ class Base
 	{
 		$this->error(404,$block);
 	}
+
+	public function logger()
+	{
+		return $this->request->logger();
+	}
 	
 	public function pass()
 	{
