@@ -11,13 +11,13 @@
  - halting
  - passing routes
  - error handling (`error` `not_found` `halt(500)`)
+ - logging via Rackem\Logger
  - settings
  - configure blocks (global and per environment)
  - completely Rack complient (using Rack'em)
  
 ## What needs doing
 
- - helpers for loggers
  - serving static files and multipart (this may be something for Rack'em)
  - handling sessions (again, might be something for Rack'em)
  - templating engines (haml,twig,mustache,markdown) at the very least
