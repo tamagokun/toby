@@ -1,12 +1,17 @@
 <?php
 
-require 'rackem/rackem.php';
+//require 'rackem/rackem.php';
+require '/Users/mkruk/Sites/php/rackem/rackem.php';
 require dirname(__FILE__).'/../router.php';
 
 $app = new \Router\Base();
 
 $app->get("/",function($app) {
 	return $app->php("index");
+});
+
+$app->get("/uploaded",function($app) {
+	return $app->send_file("{$app->root}/uploads/bootstrap-popover.js");
 });
 
 $app->post("/",function($app) {

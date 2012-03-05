@@ -65,6 +65,13 @@ class Base
 	{
 		return $this->request->referer();
 	}
+
+	public function content_type($type = null, $params = array())
+	{
+		if(!$type) return $this->response->header["Content-Type"];
+		$mime_type = $this->mime_type($type);
+		return $this->response->header["Content-Type"] = $mime_type;
+	}
 	
 	public function error($codes, $block=null)
 	{
@@ -87,10 +94,17 @@ class Base
 			if(is_int($arg)) $this->status($arg);
 			elseif(is_string($arg)) $this->response->write($arg);
 			elseif(is_callable($arg)) $this->response->write($arg($this));
+			elseif(is_array($arg)) $this->response->send($arg);
 		}
 		if($this->is_server_error() || $this->is_client_error())
 			throw new \Exception(count($this->response->body)? implode("",$this->response->body) : 'Halt');
 		return "";
+	}
+
+	public function headers($headers = null)
+	{
+		if($headers) $this->response->header = array_merge($this->response->header,$headers);
+		return $this->response->header;
 	}
 	
 	public function is_informational()
@@ -142,6 +156,13 @@ class Base
 	{
 		return $this->request->logger();
 	}
+
+	public function mime_type($type,$value=null)
+	{
+		if(is_null($type) || strpos("/",$type) > -1) return $type;
+		if(is_null($value)) return \Rackem\Mime::mime_type($type,null);
+		\Rackem\Mime::$mime_types[$type] = $value;
+	}
 	
 	public function pass()
 	{
@@ -179,6 +200,32 @@ class Base
 	{
 		if(!is_null($value)) $this->response->status = $value;
 		return $this->response->status;
+	}
+
+	public function attachment($filename)
+	{
+		$this->response->header["Content-Disposition"] = "attachment";
+
+	}
+
+	public function send_file($path,$options=array())
+	{
+		if(isset($options["type"]) || !isset($this->response->header["Content-Type"]))
+			$this->content_type(isset($options["type"])? $options["type"] : pathinfo($path,PATHINFO_EXTENSION));
+		if(isset($options["disposition"]) && $options["disposition"] == "attachment" || isset($options["filename"]))
+			$this->attachment();
+		elseif( $options["disposition"] == "inline")
+			$this->response->header["Content-Disposition"] = "inline";
+		if(isset($options["last_modified"]))
+			$this->last_modified($options["last_modified"]);
+
+		$file = new \Rackem\File("");
+		$file->path = $path;
+		$result = $file->serving($this->env);
+		$headers = $this->headers();
+		$this->headers($result[1]);
+		$headers["Content-Length"] = $result[1]["Content-Length"];
+		return $this->halt(array($result[0],$result[2]));
 	}
 	
 	public function url($address,$absolute = true,$script_name = true)
