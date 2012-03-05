@@ -88,7 +88,8 @@ class Base
 			elseif(is_string($arg)) $this->response->write($arg);
 			elseif(is_callable($arg)) $this->response->write($arg($this));
 		}
-		if($this->is_server_error() || $this->is_client_error()) throw new \Exception('Halt');
+		if($this->is_server_error() || $this->is_client_error())
+			throw new \Exception(count($this->response->body)? implode("",$this->response->body) : 'Halt');
 		return "";
 	}
 	
@@ -217,7 +218,7 @@ class Base
 	{
 		$template = $this->find_template($views,$data,$engine);
 		if($template) return new Template($template);
-		return false;	//500 no template
+		return $this->halt(500,"Template $data not found.");
 	}
 	
 	private function configure_environment()
@@ -315,13 +316,14 @@ class Base
 		//gimme options
 		$layout = (isset($options["layout"]))? $options["layout"] : "layout";
 		$layout_engine = (isset($options["layout_engine"]))? $options["layout_engine"] : $engine;
+		$layout_locals = array("app"=>$this);
 		//create template
 		$views = $this->settings->views;
 		$template = $this->compile_template($engine,$data,$options,$views);
-		$output = $block;
-		if($template) $output = $template->render($locals,$block);
+		$output = "";
+		if($template) $output = $template->render(array_merge($locals,$layout_locals),$block);
 		if($layout && is_null($block))
-			return $this->render($layout_engine,$layout,$options,$locals,$output);
+			return $this->render($layout_engine,$layout,$options,$layout_locals,$output);
 		return $output;
 	}
 	
@@ -338,7 +340,8 @@ class Base
 	{
 		$this->safe_set("environment",isset($_SERVER['RACK_ENV'])? $_SERVER['RACK_ENV'] : "development");
 		$this->safe_set("show_exceptions", $this->is_development());
-		if(isset($this->env)) $this->safe_set("root", dirname($this->env['SCRIPT_FILENAME']));
+		if(!$this->env) return;
+		$this->safe_set("root", dirname($this->env['SCRIPT_FILENAME']));
 		$this->safe_set("views", "{$this->root}/views");
 		$this->safe_set("public_folder", "{$this->root}/public");
 	}

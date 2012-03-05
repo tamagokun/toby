@@ -22,7 +22,7 @@ class Template
 	{
 		$extensions = array(
 			"php" => array("php","html","html.php"),
-			"markdown"	=> array("markdown","md","mkd"),
+			"markdown"	=> array("markdown","md","mkd")
 		);
 		if(isset($extensions[$extension]))
 			return $extensions[$extension];
