@@ -210,21 +210,18 @@ class Base
 
 	public function send_file($path,$options=array())
 	{
-		if(isset($options["type"]) || !isset($this->response->header["Content-Type"]))
-			$this->content_type(isset($options["type"])? $options["type"] : pathinfo($path,PATHINFO_EXTENSION));
 		if(isset($options["disposition"]) && $options["disposition"] == "attachment" || isset($options["filename"]))
 			$this->attachment();
-		elseif( $options["disposition"] == "inline")
-			$this->response->header["Content-Disposition"] = "inline";
-		if(isset($options["last_modified"]))
-			$this->last_modified($options["last_modified"]);
-
+		elseif( $options["disposition"] == "inline") $this->response->header["Content-Disposition"] = "inline";
+		
 		$file = new \Rackem\File("");
 		$file->path = $path;
 		$result = $file->serving($this->env);
 		$headers = $this->headers();
 		$this->headers($result[1]);
 		$headers["Content-Length"] = $result[1]["Content-Length"];
+		if(isset($options["type"])) $this->content_type($options["type"]);
+		if(isset($options["last_modified"])) $this->last_modified($options["last_modified"]);
 		return $this->halt(array($result[0],$result[2]));
 	}
 	
