@@ -22,6 +22,7 @@ $app->post("/",function($app) {
 		//tmp_name
 		//error
 		//size
+	mkdir("{$app->root}/uploads");
 	$handle = fopen("{$app->root}/uploads/{$app->params->image["name"]}","w");
 	if($handle)
 	{

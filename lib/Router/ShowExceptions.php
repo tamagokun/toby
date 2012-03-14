@@ -1,18 +1,19 @@
 <?php
 namespace Router;
 
-class ShowExceptions extends \Rackem\Exceptions
-{
-	public function call($env)
+class ShowExceptions extends \Rackem\ShowExceptions
+{	
+	public function error_handler($no,$str,$file,$line)
 	{
-		try
-		{
-			return $this->app->call($env);
-		}catch(\Exception $e)
-		{
-			$this->handle_exception($env, $e);
-			return array(500, array('Content-Type' => 'text/html'), array($this->error_template($env,$e)));
-		}
+		$e = new \ErrorException($str,$no,0,$file,$line);
+		$this->exception_handler($e);	
+	}
+	
+	public function exception_handler($e)
+	{
+		$this->handle_exception($this->app->env,$e);
+		$response = array($this->error_template($e));
+		$this->app->halt(array(500, array('Content-Type' => 'text/html'), $response));
 	}
 
 	private function pretty_array($array,$name="data")
@@ -46,10 +47,12 @@ class ShowExceptions extends \Rackem\Exceptions
 		return $block;
 	}
 
-	protected function error_template($env,$e)
+	protected function error_template($e,$env=null)
 	{
+		if(is_null($env)) $env = $this->app->env;
 		$exception = get_class($e);
-		$location = $this->location(array_shift($e->getTrace()));
+		$trace = $e->getTrace();
+		$location = $this->location(array_shift($trace));
 		$path = ($this->app->request)? $this->app->request->path_info() : "/";
 		$full_stack = $this->pretty_trace($e);
 		$env_stack = $this->pretty_array($env);

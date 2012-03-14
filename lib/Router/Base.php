@@ -97,7 +97,7 @@ class Base
 			elseif(is_array($arg)) $this->response->send($arg);
 		}
 		if($this->is_server_error() || $this->is_client_error())
-			throw new \Exception(count($this->response->body)? implode("",$this->response->body) : 'Halt');
+			throw new HaltException(count($this->response->body)? implode("",$this->response->body) : 'Halt');
 		return "";
 	}
 
@@ -282,10 +282,10 @@ class Base
 			//if( settings->static )
 			$this->filters("before");
 			$this->routes();
-		}catch(\Exception $e)
+		}catch(HaltException $e)
 		{
 			ob_end_clean();
-			if($this->show_exceptions) throw $e;
+			if($this->show_exceptions) return;
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -403,6 +403,8 @@ class Base
 			if($this->process_route($pattern,$keys,$route) !== false) return;
 		}
 		$this->status(404);
-		throw new \Exception('Not Found');
+		throw new HaltException('Not Found');
 	}
 }
+
+class HaltException extends \ErrorException {}
