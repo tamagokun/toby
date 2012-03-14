@@ -196,6 +196,9 @@ class Base
 		$this->settings->$key = $value;
 	}
 	
+	public function enable($key) { $this->set($key,true); }
+	public function disable($key) { $this->set($key, false); }
+	
 	public function status($value=null)
 	{
 		if(!is_null($value)) $this->response->status = $value;
