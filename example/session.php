@@ -9,6 +9,7 @@ $app->enable("sessions");
 
 $app->get("/", function($app) {
 	$app->env["rack.session"]["value"] = "Hello World!";
+	$app->response->set_cookie()
 	return "The cookie you created contains the value: {$app->request->session('value')}";
 });
 
