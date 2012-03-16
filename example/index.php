@@ -10,7 +10,7 @@ $app->configure(function($app) {
 });
 
 $app->before(function($app) {
-	throw new \Exception('boom');
+	//throw new \Exception('boom');
 	return "";
 });
 
@@ -21,11 +21,11 @@ $app->before("/hello/*/*/*",function($app) {
 
 $app->condition("testing",function() { return true; });
 
-$app->get('/hello/:name/:place',function($app) {
+$app->get('/hello/:name/:place',function($app,$name,$place) {
 	//return $app->pass();
-	return $app->redirect("/hello/");
-	$app->response->write($app->public_folder);
-	return $app->php("testing",array(),array("name"=>$app->params->name,"place"=>$app->params->place));
+	//return $app->redirect("/hello/");
+	//$app->response->write($app->public_folder);
+	return $app->php("testing",array(),array("name"=>$name,"place"=>$place));
 });
 
 $app->get('/',function($app) {

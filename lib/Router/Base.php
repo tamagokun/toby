@@ -289,7 +289,7 @@ class Base
 		}catch(HaltException $e)
 		{
 			ob_end_clean();
-			//if($this->show_exceptions) return;
+			if($this->show_exceptions) return;
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -355,7 +355,7 @@ class Base
 		foreach($route->conditions as $condition=>$value) if(!$this->process_condition($condition,$value)) return false;
 		$params = $this->param_list($keys,array_slice($matches,1));
 		foreach($params as $key=>$value) $this->params->$key = $value;
-		if($output = $route($this)) $this->response->send($output);
+		if($output = $route($this,$params)) $this->response->send($output);
 		return $output;
 	}
 	

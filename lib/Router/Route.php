@@ -15,9 +15,9 @@ class Route
 		foreach($conditions as $condition) $this->conditions = array_merge($this->conditions,$condition);
 	}
 	
-	public function __invoke()
+	public function __invoke($app,$params)
 	{
-		return call_user_func_array($this->block,func_get_args());
+		return call_user_func_array($this->block,array_merge(array($app),$params));
 	}
 	
 	public function compile()
