@@ -2,18 +2,25 @@
 namespace Router;
 
 class ShowExceptions extends \Rackem\ShowExceptions
-{	
+{
+	public function __construct($app,$router)
+	{
+		$this->app = $app;
+		$this->router = $router;
+	}
+	
 	public function error_handler($no,$str,$file,$line)
 	{
 		$e = new \ErrorException($str,$no,0,$file,$line);
-		$this->exception_handler($e);	
+		$this->exception_handler($e);
+		return true;
 	}
 	
 	public function exception_handler($e)
 	{
-		$this->handle_exception($this->app->env,$e);
+		$this->handle_exception($this->env,$e);
 		$response = array($this->error_template($e));
-		$this->app->halt(array(500, array('Content-Type' => 'text/html'), $response));
+		return $this->router->halt(array(500, array('Content-Type' => 'text/html'), $response));
 	}
 
 	private function pretty_array($array,$name="data")
@@ -49,11 +56,11 @@ class ShowExceptions extends \Rackem\ShowExceptions
 
 	protected function error_template($e,$env=null)
 	{
-		if(is_null($env)) $env = $this->app->env;
+		if(is_null($env)) $env = $this->env;
 		$exception = get_class($e);
 		$trace = $e->getTrace();
 		$location = $this->location(array_shift($trace));
-		$path = ($this->app->request)? $this->app->request->path_info() : "/";
+		$path = isset($this->app->request)? $this->app->request->path_info() : "/";
 		$full_stack = $this->pretty_trace($e);
 		$env_stack = $this->pretty_array($env);
 		$get_stack = isset($env['rack.request.query_hash'])? $this->pretty_array($env['rack.request.query_hash']) : "";

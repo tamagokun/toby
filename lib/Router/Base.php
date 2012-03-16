@@ -180,7 +180,8 @@ class Base
 
 	public function run($rackem = "\Rackem\Rack")
 	{
-		if($this->show_exceptions) $rackem::use_middleware("\Router\ShowExceptions");
+		if($this->show_exceptions) $rackem::use_middleware("\Router\ShowExceptions",$this);
+		if($this->sessions) $rackem::use_middleware("\Rackem\Session\Cookie",$this->session_options());
 		foreach($this->middleware as $middleware)
 			call_user_func_array("$rackem::use_middleware",$middleware);
 		$rackem::run($this);
@@ -288,7 +289,7 @@ class Base
 		}catch(HaltException $e)
 		{
 			ob_end_clean();
-			if($this->show_exceptions) return;
+			//if($this->show_exceptions) return;
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -407,6 +408,12 @@ class Base
 		}
 		$this->status(404);
 		throw new HaltException('Not Found');
+	}
+	
+	private function session_options()
+	{
+		$options = $this->session_secret? array("secret"=>$this->session_secret) : array();
+		return is_array($this->sessions)? array_merge($options,$this->sessions) : $options;
 	}
 }
 
