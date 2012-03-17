@@ -2,25 +2,12 @@
 namespace Router;
 
 class ShowExceptions extends \Rackem\ShowExceptions
-{
-	public function __construct($app,$router)
-	{
-		$this->app = $app;
-		$this->router = $router;
-	}
-	
-	public function error_handler($no,$str,$file,$line)
-	{
-		$e = new \ErrorException($str,$no,0,$file,$line);
-		$this->exception_handler($e);
-		return true;
-	}
-	
+{	
 	public function exception_handler($e)
 	{
 		$this->handle_exception($this->env,$e);
 		$response = array($this->error_template($e));
-		return $this->router->halt(array(500, array('Content-Type' => 'text/html'), $response));
+		throw new \Rackem\Exception(500,array('Content-Type' => 'text/html'), $response);
 	}
 
 	private function pretty_array($array,$name="data")

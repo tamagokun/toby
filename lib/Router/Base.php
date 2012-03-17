@@ -73,10 +73,16 @@ class Base
 		return $this->response->header["Content-Type"] = $mime_type;
 	}
 	
-	public function error($codes, $block=null)
+	public function error()
 	{
-		$codes = is_array($codes)? $codes : array($codes);
-		foreach($codes as $code) $this->errors[$code] = $block;
+		$args = func_get_args();
+		$block = array_pop($args);
+		if(!empty($block))
+		{
+			$codes = array_shift($args);
+			$codes = is_array($codes)? $codes : array($codes);
+			foreach($codes as $code) $this->errors[$code] = $block;
+		}else $this->errors["all"] = $block;
 	}
 	
 	public function get($path) { $this->add_route("GET",func_get_args()); }
@@ -97,7 +103,7 @@ class Base
 			elseif(is_array($arg)) $this->response->send($arg);
 		}
 		if($this->is_server_error() || $this->is_client_error())
-			throw new HaltException(count($this->response->body)? implode("",$this->response->body) : 'Halt');
+			throw new Halt(count($this->response->body)? implode("",$this->response->body) : 'Halt');
 		return "";
 	}
 
@@ -286,10 +292,15 @@ class Base
 			//if( settings->static )
 			$this->filters("before");
 			$this->routes();
-		}catch(HaltException $e)
+		}catch(\Exception $e)
 		{
 			ob_end_clean();
-			if($this->show_exceptions) return;
+			if($this->show_exceptions)
+			{
+				$handler = new ShowExceptions($this);
+				$handler->env = $this->env;
+				$handler->exception_handler($e);
+			}
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -320,8 +331,8 @@ class Base
 	{
 		$this->env['router.error'] = $e;
 		foreach($this->errors as $code=>$error)
-			if($code == $this->response->status || $code == get_class($e))
-				return is_callable($error)? $error($this) : $error;
+			if($code == $this->response->status || $code == get_class($e) || $code == "all")
+				return is_callable($error)? $error($this,$e) : $error;
 		return array(500,"<h1>Internal Server Error</h1>");
 	}
 
@@ -407,7 +418,7 @@ class Base
 			if($this->process_route($pattern,$keys,$route) !== false) return;
 		}
 		$this->status(404);
-		throw new HaltException('Not Found');
+		throw new Halt('Not Found');
 	}
 	
 	private function session_options()
@@ -417,4 +428,4 @@ class Base
 	}
 }
 
-class HaltException extends \ErrorException {}
+class Halt extends \ErrorException {}
