@@ -186,7 +186,7 @@ class Base
 
 	public function run($rackem = "\Rackem\Rack")
 	{
-		if($this->show_exceptions) $rackem::use_middleware("\Router\ShowExceptions",$this);
+		if($this->show_exceptions) $rackem::use_middleware("\Router\ShowExceptions");
 		if($this->sessions) $rackem::use_middleware("\Rackem\Session\Cookie",$this->session_options());
 		foreach($this->middleware as $middleware)
 			call_user_func_array("$rackem::use_middleware",$middleware);
