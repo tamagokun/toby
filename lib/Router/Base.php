@@ -75,14 +75,10 @@ class Base
 	
 	public function error()
 	{
-		$args = func_get_args();
-		$block = array_pop($args);
-		if(!empty($block))
-		{
-			$codes = array_shift($args);
-			$codes = is_array($codes)? $codes : array($codes);
-			foreach($codes as $code) $this->errors[$code] = $block;
-		}else $this->errors["all"] = $block;
+		$codes = (func_num_args() > 1)? array_shift(func_get_args()) : array("all");
+		if(!is_array($codes)) $codes = array($codes);
+		$block = array_pop(func_get_args());
+		foreach($codes as $code) $this->errors[$code] = $block;
 	}
 	
 	public function get($path) { $this->add_route("GET",func_get_args()); }
@@ -331,8 +327,10 @@ class Base
 	{
 		$this->env['router.error'] = $e;
 		foreach($this->errors as $code=>$error)
-			if($code == $this->response->status || $code == get_class($e) || $code == "all")
+			if($code == $this->response->status || $code == get_class($e))
 				return is_callable($error)? $error($this,$e) : $error;
+		if(array_key_exists("all",$this->errors) && $default_error = $this->errors["all"])
+			return is_callable($default_error)? $default_error($this,$e) : $default_error;
 		return array(500,"<h1>Internal Server Error</h1>");
 	}
 

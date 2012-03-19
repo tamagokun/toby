@@ -55,7 +55,7 @@ $app->not_found(function($app) {
 	return "Doh!! I was not found :(";
 });
 
-$app->error('MyException',function($app) {
+$app->error(function($app) {
 	return "GAH!!!!!!!!!!!!!!!!!";
 });
 
