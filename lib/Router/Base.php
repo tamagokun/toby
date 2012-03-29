@@ -259,9 +259,24 @@ class Base
 	public function __unset($prop) { unset($this->settings->$prop); }
 	
 	//template engines
+	public function haml($template,$options=array(),$locals=array())
+	{
+		return $this->render("haml",$template,$options,$locals);
+	}
+	
+	public function mustache($template,$options=array(),$locals=array())
+	{
+		return $this->render("mustache",$template,$options,$locals);
+	}
+	
 	public function php($template,$options=array(),$locals=array())	
 	{
 		return $this->render("php",$template,$options,$locals);
+	}
+	
+	public function sass($template,$options=array(),$locals=array())
+	{
+		return $this->render("sass",$template,$options,$locals);
 	}
 	
 	//private
@@ -275,7 +290,11 @@ class Base
 	private function compile_template($engine,$data,$options,$views)
 	{
 		$template = $this->find_template($views,$data,$engine);
-		if($template) return new Template($template);
+		if($template)
+		{
+			if($engine = Template::engine($engine)) return new $engine($template);
+			return new Template($template);
+		}
 		return $this->halt(500,"Template $data not found.");
 	}
 	
