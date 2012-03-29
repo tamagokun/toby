@@ -245,7 +245,7 @@ class Base
 		$this->middleware[] = func_get_args();
 	}
 	
-	public function __get($prop) { return (isset($this->$prop))? $this->settings->$prop : null; }
+	public function __get($prop) { return isset($this->$prop)? $this->settings->$prop : null; }
 	public function __isset($prop) { return isset($this->settings->$prop); }
 	public function __set($prop,$value) { $this->set($prop,$value); }
 	public function __unset($prop) { unset($this->settings->$prop); }
