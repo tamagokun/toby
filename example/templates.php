@@ -8,7 +8,7 @@ require 'Mustache.php';
 $app = new \Router\Base();
 
 $app->get("/", function($app) {
-	return $app->mustache("some_template",array("name"=>"Mike"));
+	return $app->mustache("some_template",array("layout_engine"=>"php"),array("name"=>"Mike"));
 });
 
 $app->run();
