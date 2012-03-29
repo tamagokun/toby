@@ -89,6 +89,14 @@ class Base
 	public function post($path) { $this->add_route("POST",func_get_args()); }
 	public function put($path) { $this->add_route("PUT",func_get_args()); }
 	
+	public function flash($key,$value=null)
+	{
+		if(!isset($this->env["rack.session"]["flash"])) 
+			$this->env["rack.session"]["flash"] = array();
+		if(is_null($value)) return $this->env["rack.session"]["flash"][$key];
+		$this->env["rack.session"]["flash"][$key] = $value;
+	}
+	
 	public function halt()
 	{
 		foreach(func_get_args() as $arg)
