@@ -6,18 +6,17 @@ require dirname(__FILE__).'/../router.php';
 $app = new \Router\Base();
 
 $app->enable("sessions");
-$app->sessions = array("domain"=>"dev.local","expire_after"=>3600);
+$app->sessions = array("key"=>"router_session","domain"=>"dev.local","expire_after"=>3600);
 
 $app->get("/", function($app) {
 	$app->env["rack.session"]["value"] = "Hello World!";
 	$app->flash("error","There was an error!");
-	//$app->response->set_cookie("some_stuff",array("value"=>"Hello World!"));
-	//return "The cookie you created contains the value: {$app->request->session('value')}";
 	return $app->php("index");
 });
 
 $app->post("/", function($app) {
-	return $app->php("post");
+	//return array("<pre>",print_r($app->env,true));
+	return "<h1>".$app->flash("error")."</h1>";
 });
 
 $app->get("/hello", function($app) {
