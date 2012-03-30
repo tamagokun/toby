@@ -4,6 +4,20 @@ _Making PHP development fun again._
 
 [Sinatra](http://www.sinatrarb.com/) for PHP, built on Rack'em.
 
+## Hello World
+
+```php
+<?php
+require 'toby/toby.php'
+
+$app = new \Toby\Base();
+$app->get('/',function() {
+    return "Hello World!";
+});
+$app->run();
+?>
+```
+
 ## What we have so far
 
  - routing (`DELETE`,`GET`,`HEAD`,`OPTIONS`,`PATCH`,`POST`,`PUT`)
