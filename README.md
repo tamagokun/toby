@@ -1,6 +1,8 @@
 # [Old Toby](http://www.youtube.com/watch?v=YAZpjWZRNAc)
 
-_Making PHP development fun again_
+_Making PHP development fun again._
+
+[Sinatra](http://www.sinatrarb.com/) for PHP, built on Rack'em.
 
 ## What we have so far
 
