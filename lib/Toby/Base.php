@@ -407,7 +407,7 @@ class Base
 		$output = "";
 		if($template) $output = $template->render(array_merge($locals,$layout_locals),$block);
 		if($layout && is_null($block))
-			return $this->render($layout_engine,$layout,$options,$layout_locals,$output);
+			return $this->render($layout_engine,$layout,$options,array_merge($locals,$layout_locals),$output);
 		return $output;
 	}
 	
