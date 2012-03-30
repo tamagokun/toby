@@ -1,5 +1,5 @@
 <?php
-namespace Router;
+namespace Toby;
 
 class Base
 {
@@ -39,7 +39,7 @@ class Base
 	{
 		$this->env = $env;
 		$this->request = new \Rackem\Request($env);
-		$this->response = ($this->app)? new \Rack\Response($this->app->call($env)) : new \Rackem\Response();
+		$this->response = ($this->app)? new \Rackem\Response($this->app->call($env)) : new \Rackem\Response();
 		$this->params = (object) $this->request->params();
 		$this->reset();
 		$this->configure_environment();
@@ -190,7 +190,7 @@ class Base
 
 	public function run($rackem = "\Rackem\Rack")
 	{
-		if($this->show_exceptions) $rackem::use_middleware("\Router\ShowExceptions");
+		if($this->show_exceptions) $rackem::use_middleware("\Toby\ShowExceptions");
 		if($this->sessions) $rackem::use_middleware("\Rackem\Session\Cookie",$this->session_options());
 		foreach($this->middleware as $middleware)
 			call_user_func_array("$rackem::use_middleware",$middleware);
@@ -352,7 +352,7 @@ class Base
 	
 	private function handle_error($e)
 	{
-		$this->env['router.error'] = $e;
+		$this->env['toby.error'] = $e;
 		foreach($this->errors as $code=>$error)
 			if($code == $this->response->status || $code == get_class($e))
 				return is_callable($error)? $error($this,$e) : $error;

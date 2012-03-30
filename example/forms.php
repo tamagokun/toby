@@ -2,9 +2,9 @@
 
 //require 'rackem/rackem.php';
 require '/Users/mkruk/Sites/php/rackem/rackem.php';
-require dirname(__FILE__).'/../router.php';
+require dirname(__FILE__).'/../toby.php';
 
-$app = new \Router\Base();
+$app = new \Toby\Base();
 
 $app->get("/",function($app) {
 	return $app->php("index");

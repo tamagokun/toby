@@ -1,9 +1,9 @@
 <?php
 
 require 'rackem/rackem.php';
-require dirname(__FILE__).'/../router.php';
+require dirname(__FILE__).'/../toby.php';
 
-$app = new \Router\Base();
+$app = new \Toby\Base();
 
 $app->configure(function($app) {
 	$app->set("public_folder","{$app->root}/lots_of_pooop");

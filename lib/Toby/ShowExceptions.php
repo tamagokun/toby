@@ -1,8 +1,8 @@
 <?php
-namespace Router;
+namespace Toby;
 
 class ShowExceptions extends \Rackem\ShowExceptions
-{	
+{
 	public function exception_handler($e)
 	{
 		$this->handle_exception($this->env,$e);

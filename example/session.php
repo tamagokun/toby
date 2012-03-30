@@ -1,9 +1,9 @@
 <?php
 
 require 'rackem/rackem.php';
-require dirname(__FILE__).'/../router.php';
+require dirname(__FILE__).'/../toby.php';
 
-$app = new \Router\Base();
+$app = new \Toby\Base();
 
 $app->enable("sessions");
 $app->sessions = array("key"=>"router_session","domain"=>"dev.local","expire_after"=>3600);

@@ -1,5 +1,5 @@
 <?php
-namespace Router;
+namespace Toby;
 
 class Route
 {

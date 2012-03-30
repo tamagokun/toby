@@ -1,7 +1,7 @@
 <?php
-namespace Router\Template;
+namespace Toby\Template;
 
-class Mustache extends \Router\Template
+class Mustache extends \Toby\Template
 {
 	public function render($locals,$yield)
 	{
