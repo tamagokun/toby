@@ -2,7 +2,7 @@
 
 _Making PHP development fun again._
 
-[Sinatra](http://www.sinatrarb.com/) for PHP, built on Rack'em.
+The finest Leaf in the Southfarthing is also [Sinatra](http://www.sinatrarb.com/) for PHP, built on Rack'em.
 
 ## Hello World
 
