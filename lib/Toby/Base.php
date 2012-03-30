@@ -342,7 +342,7 @@ class Base
 		}
 	}
 	
-	private function find_template($views,$name,$engine)
+	protected function find_template($views,$name,$engine)
 	{
 		$ext = Template::engine_extension($engine);
 		foreach($ext as $possible_ext)
@@ -350,7 +350,7 @@ class Base
 		return false;
 	}
 	
-	private function handle_error($e)
+	protected function handle_error($e)
 	{
 		$this->env['toby.error'] = $e;
 		foreach($this->errors as $code=>$error)
@@ -361,7 +361,7 @@ class Base
 		return array(500,"<h1>Internal Server Error</h1>");
 	}
 
-	private function param_list($keys,$matches)
+	protected function param_list($keys,$matches)
 	{
 		$params = array();
 		foreach(array_values($keys) as $index=>$key)
@@ -374,7 +374,7 @@ class Base
 		return $params;
 	}
 	
-	private function process_condition($condition,$value)
+	protected function process_condition($condition,$value)
 	{
 		if(array_key_exists($condition,$this->conditions)){
 			$block = $this->conditions[$condition];
@@ -395,7 +395,7 @@ class Base
 		return $output;
 	}
 	
-	private function render($engine,$data,$options=array(),$locals=array(),$block=null)
+	protected function render($engine,$data,$options=array(),$locals=array(),$block=null)
 	{
 		//gimme options
 		$layout = (isset($options["layout"]))? $options["layout"] : "layout";
@@ -411,7 +411,7 @@ class Base
 		return $output;
 	}
 	
-	private function request_uri()
+	protected function request_uri()
 	{
 		$path = $this->request->path_info();
 		//TODO: find a better way to handle old web servers
@@ -420,7 +420,7 @@ class Base
 		return $path;
 	}
 
-	private function reset()
+	protected function reset()
 	{
 		$this->safe_set("environment",isset($_SERVER['RACK_ENV'])? $_SERVER['RACK_ENV'] : "development");
 		$this->safe_set("show_exceptions", $this->is_development());
@@ -430,12 +430,12 @@ class Base
 		$this->safe_set("public_folder", "{$this->root}/public");
 	}
 	
-	private function route($method,$path,$block,$conditions=array())
+	protected function route($method,$path,$block,$conditions=array())
 	{
 		$this->routes[] = new Route($method,$path,$block,$conditions);
 	}
 	
-	private function routes()
+	protected function routes()
 	{
 		foreach($this->routes as $route)
 		{
@@ -446,7 +446,7 @@ class Base
 		throw new Halt('Not Found');
 	}
 	
-	private function session_options()
+	protected function session_options()
 	{
 		$options = $this->session_secret? array("secret"=>$this->session_secret) : array();
 		return is_array($this->sessions)? array_merge($options,$this->sessions) : $options;
