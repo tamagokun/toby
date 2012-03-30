@@ -1,11 +1,14 @@
-# Possibly the best PHP web application framework
+# [Old Toby](http://www.youtube.com/watch?v=YAZpjWZRNAc)
+
+_Making PHP development fun again_
 
 ## What we have so far
 
  - routing (`DELETE`,`GET`,`HEAD`,`OPTIONS`,`PATCH`,`POST`,`PUT`)
  - route matching (`$app->get("/hello/:name");`)
  - render templates and layouts
- 	 - currently supported: `php`
+ 	 - currently supported: `php`,`mustache`,`markdown`,`haml`
+ 	 - more to come!
  - conditions and filters
  - redirection
  - halting
@@ -15,10 +18,12 @@
  - settings
  - configure blocks (global and per environment)
  - completely Rack complient (using Rack'em)
+ - serving static files
+ - handling file uploads
+ - handling sessions (`$app->enable("sessions");`)
+ - flash messaging (`$app->flash("error","Gah! Something happened!");`)
  
 ## What needs doing
 
- - serving static files and multipart (this may be something for Rack'em)
- - handling sessions (again, might be something for Rack'em)
- - templating engines (haml,twig,mustache,markdown) at the very least
- - a proper name (Router? What was I thinking?)
+ - ensuring that chunked multi-part uploads work
+ - support for more templating engines. (twig, jade, etc.)
