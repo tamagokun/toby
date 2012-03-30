@@ -81,13 +81,13 @@ class Base
 		foreach($codes as $code) $this->errors[$code] = $block;
 	}
 	
-	public function get($path) { $this->add_route("GET",func_get_args()); }
-	public function delete($path) { $this->add_route("DELETE",func_get_args()); }
-	public function head($path) { $this->add_route("HEAD",func_get_args()); }
-	public function options($path) { $this->add_route("OPTIONS",func_get_args()); }
-	public function patch($path) { $this->add_route("PATCH",func_get_args()); }
-	public function post($path) { $this->add_route("POST",func_get_args()); }
-	public function put($path) { $this->add_route("PUT",func_get_args()); }
+	public function get($path) { return $this->add_route("GET",func_get_args()); }
+	public function delete($path) { return $this->add_route("DELETE",func_get_args()); }
+	public function head($path) { return $this->add_route("HEAD",func_get_args()); }
+	public function options($path) { return $this->add_route("OPTIONS",func_get_args()); }
+	public function patch($path) { return $this->add_route("PATCH",func_get_args()); }
+	public function post($path) { return $this->add_route("POST",func_get_args()); }
+	public function put($path) { return $this->add_route("PUT",func_get_args()); }
 	
 	public function flash($key,$value=null)
 	{
@@ -284,7 +284,7 @@ class Base
 	{
 		$path = array_shift($args);
 		$block = array_pop($args);
-		$this->route($method,$path,$block,$args);
+		return $this->route($method,$path,$block,$args);
 	}
 	
 	private function compile_template($engine,$data,$options,$views)
@@ -432,7 +432,7 @@ class Base
 	
 	protected function route($method,$path,$block,$conditions=array())
 	{
-		$this->routes[] = new Route($method,$path,$block,$conditions);
+		return $this->routes[] = new Route($method,$path,$block,$conditions);
 	}
 	
 	protected function routes()
