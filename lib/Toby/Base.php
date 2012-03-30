@@ -386,7 +386,7 @@ class Base
 	private function process_route($pattern,$keys,$route)
 	{
 		$matches = array();
-		if(!is_null($route->method) && $route->method != $this->request->request_method()) return false;
+		if(!is_null($route->method) && !in_array($this->request->request_method(),$route->method)) return false;
 		if(!preg_match_all($pattern,$this->request_uri(),$matches)) return false;
 		foreach($route->conditions as $condition=>$value) if(!$this->process_condition($condition,$value)) return false;
 		$params = $this->param_list($keys,array_slice($matches,1));

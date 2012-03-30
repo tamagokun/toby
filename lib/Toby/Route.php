@@ -8,7 +8,7 @@ class Route
 	
 	public function __construct($method,$path,$block,$conditions=array())
 	{
-		$this->method = $method;
+		$this->method = is_array($method)? $method : array($method);
 		$this->path = $path;
 		$this->block = $block;
 		$this->conditions = array();
@@ -34,6 +34,11 @@ class Route
 			return "([^/?#]+)";
 		}, $pattern);
 		return array("~^$pattern$~", $keys);
+	}
+	
+	public function via()
+	{
+		$this->method = func_get_args();
 	}
 	
 	public static function encoded($char)
