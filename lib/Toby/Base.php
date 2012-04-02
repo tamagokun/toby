@@ -226,7 +226,7 @@ class Base
 	{
 		if(isset($options["disposition"]) && $options["disposition"] == "attachment" || isset($options["filename"]))
 			$this->attachment();
-		elseif( $options["disposition"] == "inline") $this->response->header["Content-Disposition"] = "inline";
+		elseif( isset($options["disposition"]) && $options["disposition"] == "inline") $this->response->header["Content-Disposition"] = "inline";
 		
 		$file = new \Rackem\File("");
 		$file->path = $path;
