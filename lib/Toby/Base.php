@@ -181,7 +181,10 @@ class Base
 	
 	public function redirect($uri)
 	{
-		if($this->env['HTTP_VERSION'] == 'HTTP/1.1' && $this->env['REQUEST_METHOD'] !== 'GET') $status = 303;
+		if(isset($this->env['HTTP_VERSION']))
+		{
+			if($this->env['HTTP_VERSION'] == 'HTTP/1.1' && $this->env['REQUEST_METHOD'] !== 'GET') $status = 303;
+		}
 		else $status = 302;
 		
 		$this->response->redirect($this->url($uri),$status);
