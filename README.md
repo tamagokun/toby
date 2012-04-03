@@ -2,7 +2,9 @@
 
 _Making PHP development fun again._
 
-The finest Leaf in the Southfarthing is also [Sinatra](http://www.sinatrarb.com/) for PHP, built on Rack'em.
+The finest Leaf in the Southfarthing is also a web framework similar to [Sinatra](http://www.sinatrarb.com/).
+
+Built on [Rack'em](https://github.com/tamagokun/rackem).
 
 ## Hello World
 
