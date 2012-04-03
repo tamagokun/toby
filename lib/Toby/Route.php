@@ -3,7 +3,7 @@ namespace Toby;
 
 class Route
 {
-	public $method,$path,$conditions;
+	public $method,$path,$conditions,$name;
 	private $block;
 	
 	public function __construct($method,$path,$block,$conditions=array())
@@ -34,6 +34,11 @@ class Route
 			return "([^/?#]+)";
 		}, $pattern);
 		return array("~^$pattern$~", $keys);
+	}
+	
+	public function name($value)
+	{
+		$this->name = $value;
 	}
 	
 	public function via()
