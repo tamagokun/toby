@@ -3,9 +3,9 @@ namespace Toby;
 
 class Base
 {
-	public $params,$env,$request,$response;
+	public $params,$env,$request,$response,$settings;
 	
-	protected $app,$conditions,$routes,$filters,$settings,$errors,$middleware;
+	protected $app,$conditions,$routes,$filters,$errors,$middleware;
 		
 	public function __construct($app=null)
 	{
@@ -91,10 +91,10 @@ class Base
 	
 	public function flash($key=null,$value=null)
 	{
+		if(is_null($key)) return $this->flash;
+		if(is_null($value)) return isset($this->flash[$key])? $this->flash[$key] : null;
 		if(!isset($this->env["rack.session"]["flash"])) 
 			$this->env["rack.session"]["flash"] = array();
-		if(is_null($key)) return $this->env["rack.session"]["flash"];
-		if(is_null($value)) return $this->env["rack.session"]["flash"][$key];
 		$this->env["rack.session"]["flash"][$key] = $value;
 	}
 	
@@ -434,6 +434,14 @@ class Base
 		$this->safe_set("root", dirname($this->env['SCRIPT_FILENAME']));
 		$this->safe_set("views", "{$this->root}/views");
 		$this->safe_set("public_folder", "{$this->root}/public");
+		if(isset($this->env["rack.session"]["flash"]))
+		{
+			error_log("we have some flash stuff, lets take care of it!");
+			$this->set("flash",$this->env["rack.session"]["flash"]);
+			$this->env["rack.session"]["flash"] = null;
+			//print_r($this->flash);
+			//$this->env["rack.request.cookie_hash"]["flash"] = null;
+		}
 	}
 	
 	protected function route($method,$path,$block,$conditions=array())
