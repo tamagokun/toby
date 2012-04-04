@@ -39,11 +39,13 @@ class Route
 	public function name($value)
 	{
 		$this->name = $value;
+		return $this;
 	}
 	
 	public function via()
 	{
 		$this->method = func_get_args();
+		return $this;
 	}
 	
 	public static function encoded($char)
