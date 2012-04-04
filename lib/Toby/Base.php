@@ -89,10 +89,11 @@ class Base
 	public function post($path) { return $this->add_route("POST",func_get_args()); }
 	public function put($path) { return $this->add_route("PUT",func_get_args()); }
 	
-	public function flash($key,$value=null)
+	public function flash($key=null,$value=null)
 	{
 		if(!isset($this->env["rack.session"]["flash"])) 
 			$this->env["rack.session"]["flash"] = array();
+		if(is_null($key)) return $this->env["rack.session"]["flash"];
 		if(is_null($value)) return $this->env["rack.session"]["flash"][$key];
 		$this->env["rack.session"]["flash"][$key] = $value;
 	}
@@ -313,6 +314,8 @@ class Base
 	
 	private function dispatch()
 	{
+		if($this->method_override && isset($this->params->_method))
+			$this->env["REQUEST_METHOD"] = $this->params->_method;
 		try
 		{
 			//if( settings->static )
