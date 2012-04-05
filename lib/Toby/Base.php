@@ -22,7 +22,7 @@ class Base
 		$block = array_pop($args);
 		$path = (isset($args[0]) && is_string($args[0]))? array_shift($args) : "*";
 		if(!isset($this->filters[$where])) $this->filters[$where] = array();
-		$this->filters[$where][] = new Route(null,$path,$block,$args);
+		$this->filters[$where][] = new Route(array("GET","DELETE","HEAD","OPTIONS","PATCH","POST","PUT"),$path,$block,$args);
 	}
 	
 	public function after($block)
