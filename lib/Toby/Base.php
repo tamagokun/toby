@@ -436,11 +436,8 @@ class Base
 		$this->safe_set("public_folder", "{$this->root}/public");
 		if(isset($this->env["rack.session"]["flash"]))
 		{
-			error_log("we have some flash stuff, lets take care of it!");
 			$this->set("flash",$this->env["rack.session"]["flash"]);
 			$this->env["rack.session"]["flash"] = null;
-			//print_r($this->flash);
-			//$this->env["rack.request.cookie_hash"]["flash"] = null;
 		}
 	}
 	
