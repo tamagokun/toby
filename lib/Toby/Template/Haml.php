@@ -5,9 +5,9 @@ class Haml extends \Toby\Template
 {
 	public function render($locals,$yield)
 	{
-		if(!class_exists("\\HamlPHP")) throw new \Rackem\Exception("Required class 'HamlPHP' not found.");
+		if(!class_exists("\\HamlPHP")) throw new \Exception("Required class 'HamlPHP' not found.");
 		$cache_dir = $this->find_cache_dir(__DIR__);
-		if(!$cache_dir) throw new \Rackem\Exception("Could not find a .cache directory for haml engine.");
+		if(!$cache_dir) throw new \Exception("Could not find a .cache directory for haml engine.");
 		$engine = new \HamlPHP(new \FileStorage($cache_dir));
 		$locals["yield"] = $yield;
 		ob_start();
@@ -20,6 +20,7 @@ class Haml extends \Toby\Template
 		$dir = rtrim($dir,'/').'/';
 		if(!is_dir($dir)) return false;
 		if(file_exists("$dir.cache")) return "$dir.cache/";
+		if($dir == '/') return false;
 		return $this->find_cache_dir(dirname($dir));
 	}
 }
