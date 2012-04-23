@@ -246,8 +246,8 @@ class Base
 	public function url($address,$absolute = true,$script_name = true)
 	{
 		$uri = array();
-		if($absolute) $uri[] = rtrim($this->request->base_url(),'/');
-		if($script_name) $uri[] = $this->env['SCRIPT_NAME'];
+		if($absolute) $uri[] = $this->request->base_url();
+		if($script_name && !empty($this->env['SCRIPT_NAME'])) $uri[] = $this->env['SCRIPT_NAME'];
 		$uri[] = ($address)? $address : $this->request->path_info();
 		return implode("/",array_map(function($v) { return ltrim($v,'/'); },$uri));
 	}
