@@ -81,13 +81,21 @@ class Base
 		foreach($codes as $code) $this->errors[$code] = $block;
 	}
 	
-	public function get($path) { return $this->add_route("GET",func_get_args()); }
-	public function delete($path) { return $this->add_route("DELETE",func_get_args()); }
-	public function head($path) { return $this->add_route("HEAD",func_get_args()); }
-	public function options($path) { return $this->add_route("OPTIONS",func_get_args()); }
-	public function patch($path) { return $this->add_route("PATCH",func_get_args()); }
-	public function post($path) { return $this->add_route("POST",func_get_args()); }
-	public function put($path) { return $this->add_route("PUT",func_get_args()); }
+	public function any($path) { return $this->on(null,func_get_args())->via(null); }
+	public function get($path) { return $this->on("GET",func_get_args()); }
+	public function delete($path) { return $this->on("DELETE",func_get_args()); }
+	public function head($path) { return $this->on("HEAD",func_get_args()); }
+	public function options($path) { return $this->on("OPTIONS",func_get_args()); }
+	public function patch($path) { return $this->on("PATCH",func_get_args()); }
+	public function post($path) { return $this->on("POST",func_get_args()); }
+	public function put($path) { return $this->on("PUT",func_get_args()); }
+	
+	public function on($method, $args)
+	{
+		$path = array_shift($args);
+		$block = array_pop($args);
+		return $this->route($method,$path,$block,$args);
+	}
 	
 	public function flash($key=null,$value=null)
 	{
@@ -284,13 +292,6 @@ class Base
 	}
 	
 	//private
-	private function add_route($method, $args)
-	{
-		$path = array_shift($args);
-		$block = array_pop($args);
-		return $this->route($method,$path,$block,$args);
-	}
-	
 	private function compile_template($engine,$data,$options,$views)
 	{
 		$template = $this->find_template($views,$data,$engine);
