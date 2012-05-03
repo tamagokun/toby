@@ -8,7 +8,7 @@ class Route
 	
 	public function __construct($method,$path,$block,$conditions=array())
 	{
-		$this->method = is_array($method)? $method : array($method);
+		$this->method = is_array($method) || is_null($method)? $method : array($method);
 		$this->path = $path;
 		$this->block = $block;
 		$this->conditions = array();

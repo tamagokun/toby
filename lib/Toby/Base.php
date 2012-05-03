@@ -81,7 +81,7 @@ class Base
 		foreach($codes as $code) $this->errors[$code] = $block;
 	}
 	
-	public function any($path) { return $this->on(null,func_get_args())->via(null); }
+	public function any($path) { return $this->on(null,func_get_args()); }
 	public function get($path) { return $this->on("GET",func_get_args()); }
 	public function delete($path) { return $this->on("DELETE",func_get_args()); }
 	public function head($path) { return $this->on("HEAD",func_get_args()); }
