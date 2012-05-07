@@ -204,6 +204,7 @@ class Base
 	{
 		if($this->show_exceptions) $rackem::use_middleware("\Toby\ShowExceptions");
 		if($this->sessions) $rackem::use_middleware("\Rackem\Session\Cookie",$this->session_options());
+		if($this->protection) \Rackem\Protection::protect(is_array($this->protection)? $this->protection : array(),$rackem);
 		foreach($this->middleware as $middleware)
 			call_user_func_array("$rackem::use_middleware",$middleware);
 		$rackem::run($this);
