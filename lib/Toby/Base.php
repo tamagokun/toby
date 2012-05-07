@@ -406,8 +406,8 @@ class Base
 	protected function render($engine,$data,$options=array(),$locals=array(),$block=null)
 	{
 		//gimme options
-		$layout = (isset($options["layout"]))? $options["layout"] : "layout";
-		$layout_engine = (isset($options["layout_engine"]))? $options["layout_engine"] : $engine;
+		$layout = isset($options["layout"])? $options["layout"] : "layout";
+		$layout_engine = isset($options["layout_engine"])? $options["layout_engine"] : $engine;
 		$layout_locals = array("app"=>$this);
 		//create template
 		$views = $this->settings->views;
