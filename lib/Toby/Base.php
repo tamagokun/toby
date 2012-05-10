@@ -432,8 +432,8 @@ class Base
 	{
 		$this->safe_set("environment",isset($_SERVER['RACK_ENV'])? $_SERVER['RACK_ENV'] : "development");
 		$this->safe_set("show_exceptions", $this->is_development());
+		$this->safe_set("root", getcwd());
 		if(!$this->env) return;
-		$this->safe_set("root", dirname($this->env['SCRIPT_FILENAME']));
 		$this->safe_set("views", "{$this->root}/views");
 		$this->safe_set("public_folder", "{$this->root}/public");
 		if(isset($this->env["rack.session"]["flash"]))
