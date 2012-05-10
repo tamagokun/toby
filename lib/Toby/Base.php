@@ -200,6 +200,7 @@ class Base
 
 	public function run($rackem = "\Rackem\Rack")
 	{
+		$rackem = $this->rack && $rackem == "\Rackem\Rack"? $this->rack : $rackem;
 		if($this->show_exceptions) $rackem::use_middleware("\Toby\ShowExceptions");
 		if($this->sessions) $rackem::use_middleware("\Rackem\Session\Cookie",$this->session_options());
 		if($this->protection) \Rackem\Protection::protect(is_array($this->protection)? $this->protection : array(),$rackem);
