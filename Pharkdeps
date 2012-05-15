@@ -1,7 +1,0 @@
-<?php
-
-$deps
-	->dependency('rackem','>=0.0.5',array('git'=>'git://github.com/tamagokun/rackem.git'))
-;
-
-?>

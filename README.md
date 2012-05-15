@@ -6,11 +6,26 @@ The finest Leaf in the Southfarthing is also a web framework similar to [Sinatra
 
 Built on [Rack'em](https://github.com/tamagokun/rackem).
 
+## Setting Up
+
+Toby works best with [Composer](http://getcomposer.org/). Add it to your `composer.json`
+
+```json
+{
+  "require": {
+	  "toby/toby": "dev-master"
+	}
+}
+```
+Install `composer install`
+Autoload `require 'vendor/autoload.php';`
+
+You can also load via PSR-0 by using `require 'toby.php';`
+
 ## Hello World
 
 ```php
 <?php
-require 'toby/toby.php'
 
 $app = new \Toby\Base();
 $app->get('/',function() {
@@ -43,5 +58,4 @@ $app->run();
  
 ## What needs doing
 
- - ensuring that chunked multi-part uploads work
  - support for more templating engines. (twig, jade, etc.)
