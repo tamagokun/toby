@@ -436,7 +436,7 @@ class Base
 		if(!$this->env) return;
 		$this->safe_set("views", "{$this->root}/views");
 		$this->safe_set("public_folder", "{$this->root}/public");
-		if(isset($this->env["rack.session"]["flash"]))
+		if(isset($this->env["rack.session") && isset($this->env["rack.session"]["flash"]))
 		{
 			$this->set("flash",$this->env["rack.session"]["flash"]);
 			$this->env["rack.session"]["flash"] = null;
