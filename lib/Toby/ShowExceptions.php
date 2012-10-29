@@ -18,7 +18,10 @@ class ShowExceptions extends \Rackem\ShowExceptions
 	{
 		$result = "";
 		foreach($array as $key=>$value)
+		{
+			if(!is_string($value)) $value = 'Object';
 			$result .= "<tr><td>$key</td><td>$value</td></tr>";
+		}
 		if(empty($result))
 			return "<p>No $name.</p>";
 		return "<table><tbody><tr><th>Variable</th><th>Value</th></tr>$result</tbody></table>";
