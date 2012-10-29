@@ -14,7 +14,8 @@ Toby works best with [Composer](http://getcomposer.org/). Add it to your `compos
 {
   "require": {
 	  "toby/toby": "dev-master"
-	}
+	},
+	"minimum-stability": "dev"
 }
 ```
 Install `composer install`
