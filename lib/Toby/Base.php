@@ -55,10 +55,11 @@ class Base
 	
 	public function configure($block)
 	{
+		$args = func_get_args();
 		if(!isset($this->settings->configure)) $this->settings->configure = array();
-		$environment = (func_num_args() > 1)? array_shift(func_get_args()) : "all";
+		$environment = (func_num_args() > 1)? array_shift($args) : "all";
 		if(!isset($this->settings->configure[$environment])) $this->settings->configure[$environment] = array();
-		$this->settings->configure[$environment][] = array_pop(func_get_args());
+		$this->settings->configure[$environment][] = array_pop($args);
 	}
 	
 	public function back()
