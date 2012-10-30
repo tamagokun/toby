@@ -208,7 +208,7 @@ class Base
 		if($this->protection) \Rackem\Protection::protect(is_array($this->protection)? $this->protection : array(),$rackem);
 		foreach($this->middleware as $middleware)
 			call_user_func_array("$rackem::use_middleware",$middleware);
-		$rackem::run($this);
+		return $rackem::run($this);
 	}
 
 	public function safe_set($key, $value)
