@@ -6,12 +6,10 @@ class ShowExceptions extends \Rackem\ShowExceptions
 	public function exception_handler($e)
 	{
 		$this->handle_exception($this->env,$e);
-		//throw new \Rackem\Exception(500,array('Content-Type' => 'text/html'), $response);
-		header($this->env['SERVER_PROTOCOL']." 500");
-		header('Content-Type: text/html');
+		$this->app->status(500);
+		$this->app->headers(array('Content-Type'=>'text/html'));
 		ob_get_clean();
-		echo $this->error_template($e);
-		exit;
+		return $this->error_template($e);
 	}
 
 	private function pretty_array($array,$name="data")

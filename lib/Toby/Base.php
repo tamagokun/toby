@@ -118,7 +118,7 @@ class Base
 		}
 		if($this->is_server_error() || $this->is_client_error())
 			throw new Halt(count($this->response->body)? implode("",$this->response->body) : 'Halt');
-		return "";
+		throw new Halt();
 	}
 
 	public function headers($headers = null)
@@ -321,18 +321,17 @@ class Base
 			$this->env["REQUEST_METHOD"] = $this->params->_method;
 		try
 		{
-			//if( settings->static )
+			if($this->static) $this->serve_static();
 			$this->filters("before");
 			$this->routes();
+		}catch(Halt $e)
+		{
+			if($this->is_server_error() || $this->is_client_error())
+				return $this->response->send($this->handle_error($e));
+			return;
 		}catch(\Exception $e)
 		{
 			ob_end_clean();
-			if($this->show_exceptions)
-			{
-				$handler = new ShowExceptions($this);
-				$handler->env = $this->env;
-				$handler->exception_handler($e);
-			}
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -362,6 +361,12 @@ class Base
 	protected function handle_error($e)
 	{
 		$this->env['toby.error'] = $e;
+		if($this->show_exceptions)
+		{
+			$handler = new ShowExceptions($this);
+			$handler->env = $this->env;
+			return $handler->exception_handler($e);
+		}
 		foreach($this->errors as $code=>$error)
 			if($code == $this->response->status || $code == get_class($e))
 				return is_callable($error)? $error($this,$e) : $error;
@@ -458,6 +463,16 @@ class Base
 		}
 		$this->status(404);
 		throw new Halt('Not Found');
+	}
+
+	protected function serve_static()
+	{
+		if(!$this->public_folder) return false;
+
+		$path = urldecode($this->public_folder.$this->request->path_info());
+		if(!file_exists($path) || !is_file($path)) return false;
+
+		return $this->send_file($path);
 	}
 	
 	protected function session_options()
