@@ -152,6 +152,11 @@ class Base
 		return $this->status() >= 500 && $this->status() <= 599;
 	}
 
+	public function is_not_found()
+	{
+		return $this->status() == 404;
+	}
+
 	public function is_development()
 	{
 		return $this->environment == "development";
@@ -361,18 +366,29 @@ class Base
 	protected function handle_error($e)
 	{
 		$this->env['toby.error'] = $e;
-		if($this->show_exceptions)
+		if(!$this->is_client_error() && !$this->is_server_error())
+			$this->status(isset($e->status)? $e->status : 500);
+
+		if($this->is_server_error())
 		{
 			$handler = new ShowExceptions($this);
 			$handler->env = $this->env;
-			return $handler->exception_handler($e);
+			if($this->dump_errors) $handler->handle_exception($this->env, $e);
+			if($this->show_exceptions) return $handler->exception_handler($e);
 		}
+
+		if($this->is_not_found())
+		{
+			$this->headers(array('X-Cascade'=>'pass'));
+			$body = "<h1>Not Found</h1>";
+		}
+
 		foreach($this->errors as $code=>$error)
 			if($code == $this->response->status || $code == get_class($e))
 				return is_callable($error)? $error($this,$e) : $error;
 		if(array_key_exists("all",$this->errors) && $default_error = $this->errors["all"])
 			return is_callable($default_error)? $default_error($this,$e) : $default_error;
-		return array(500,"<h1>Internal Server Error</h1>");
+		return array($this->status(),isset($body)? $body : "<h1>Internal Server Error</h1>");
 	}
 
 	protected function param_list($keys,$matches)
@@ -467,10 +483,10 @@ class Base
 
 	protected function serve_static()
 	{
-		if(!$this->public_folder) return false;
+		if(!$this->public_folder) return;
 
 		$path = urldecode($this->public_folder.$this->request->path_info());
-		if(!file_exists($path) || !is_file($path)) return false;
+		if(!is_file($path) || !file_exists($path)) return;
 
 		return $this->send_file($path);
 	}

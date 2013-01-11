@@ -5,9 +5,6 @@ class ShowExceptions extends \Rackem\ShowExceptions
 {
 	public function exception_handler($e)
 	{
-		$this->handle_exception($this->env,$e);
-		$this->app->status(500);
-		$this->app->headers(array('Content-Type'=>'text/html'));
 		ob_get_clean();
 		return $this->error_template($e);
 	}
