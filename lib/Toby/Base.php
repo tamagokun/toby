@@ -336,7 +336,6 @@ class Base
 			return;
 		}catch(\Exception $e)
 		{
-			ob_end_clean();
 			return $this->response->send($this->handle_error($e));
 		}
 		$this->filters("after");
@@ -365,6 +364,7 @@ class Base
 	
 	protected function handle_error($e)
 	{
+		$this->response->body = array();
 		$this->env['toby.error'] = $e;
 		if(!$this->is_client_error() && !$this->is_server_error())
 			$this->status(isset($e->status)? $e->status : 500);
