@@ -4,9 +4,9 @@ namespace Toby;
 class Base
 {
 	public $params,$env,$request,$response,$settings;
-	
+
 	protected $app,$conditions,$routes,$filters,$errors,$middleware;
-		
+
 	public function __construct($app=null)
 	{
 		$this->app = $app;
@@ -16,7 +16,7 @@ class Base
 		$this->settings = new \ArrayObject();
 		$this->reset();
 	}
-	
+
 	public function add_filter($where,$args)
 	{
 		$block = array_pop($args);
@@ -24,17 +24,17 @@ class Base
 		if(!isset($this->filters[$where])) $this->filters[$where] = array();
 		$this->filters[$where][] = new Route(array("GET","DELETE","HEAD","OPTIONS","PATCH","POST","PUT"),$path,$block,$args);
 	}
-	
+
 	public function after($block)
 	{
 		$this->add_filter("after",func_get_args());
 	}
-	
+
 	public function before($block)
 	{
 		$this->add_filter("before",func_get_args());
 	}
-	
+
 	public function call($env)
 	{
 		$this->env = $env;
@@ -46,13 +46,13 @@ class Base
 		$this->dispatch();
 		return $this->response->finish();
 	}
-	
+
 	public function condition($name,$block)
 	{
 		if(!isset($this->conditions)) $this->conditions = array();
 		$this->conditions[$name] = $block;
 	}
-	
+
 	public function configure($block)
 	{
 		$args = func_get_args();
@@ -61,7 +61,7 @@ class Base
 		if(!isset($this->settings->configure[$environment])) $this->settings->configure[$environment] = array();
 		$this->settings->configure[$environment][] = array_pop($args);
 	}
-	
+
 	public function back()
 	{
 		return $this->request->referer();
@@ -73,7 +73,7 @@ class Base
 		$mime_type = $this->mime_type($type);
 		return $this->response->header["Content-Type"] = $mime_type;
 	}
-	
+
 	public function error()
 	{
 		$codes = (func_num_args() > 1)? array_shift(func_get_args()) : array("all");
@@ -81,7 +81,7 @@ class Base
 		$block = array_pop(func_get_args());
 		foreach($codes as $code) $this->errors[$code] = $block;
 	}
-	
+
 	public function any($path) { return $this->on(null,func_get_args()); }
 	public function get($path) { return $this->on("GET",func_get_args()); }
 	public function delete($path) { return $this->on("DELETE",func_get_args()); }
@@ -90,23 +90,23 @@ class Base
 	public function patch($path) { return $this->on("PATCH",func_get_args()); }
 	public function post($path) { return $this->on("POST",func_get_args()); }
 	public function put($path) { return $this->on("PUT",func_get_args()); }
-	
+
 	public function on($method, $args)
 	{
 		$path = array_shift($args);
 		$block = array_pop($args);
 		return $this->route($method,$path,$block,$args);
 	}
-	
+
 	public function flash($key=null,$value=null)
 	{
 		if(is_null($key)) return $this->flash;
 		if(is_null($value)) return isset($this->flash[$key])? $this->flash[$key] : null;
-		if(!isset($this->env["rack.session"]["flash"])) 
+		if(!isset($this->env["rack.session"]["flash"]))
 			$this->env["rack.session"]["flash"] = array();
 		$this->env["rack.session"]["flash"][$key] = $value;
 	}
-	
+
 	public function halt()
 	{
 		foreach(func_get_args() as $arg)
@@ -126,27 +126,27 @@ class Base
 		if($headers) $this->response->header = array_merge($this->response->header,$headers);
 		return $this->response->header;
 	}
-	
+
 	public function is_informational()
 	{
 		return $this->status() >= 100 && $this->status() <= 199;
 	}
-	
+
 	public function is_success()
 	{
 		return $this->status() >= 200 && $this->status() <= 299;
 	}
-	
+
 	public function is_redirect()
 	{
 		return $this->status() >= 300 && $this->status() <= 399;
 	}
-	
+
 	public function is_client_error()
 	{
 		return $this->status() >= 400 && $this->status() <= 499;
 	}
-	
+
 	public function is_server_error()
 	{
 		return $this->status() >= 500 && $this->status() <= 599;
@@ -171,7 +171,7 @@ class Base
 	{
 		return $this->environment == "test";
 	}
-	
+
 	public function not_found($block=null)
 	{
 		$this->error(404,$block);
@@ -188,12 +188,12 @@ class Base
 		if(is_null($value)) return \Rackem\Mime::mime_type($type,null);
 		\Rackem\Mime::$mime_types[$type] = $value;
 	}
-	
+
 	public function pass()
 	{
 		return false;
 	}
-	
+
 	public function redirect($uri)
 	{
 		if(isset($this->env['HTTP_VERSION']))
@@ -204,31 +204,24 @@ class Base
 		return $this->halt();
 	}
 
-	public function run($rackem = "\Rackem\Rack")
+	public function run($with_rackem = true)
 	{
-		$rackem = $this->rack && $rackem == "\Rackem\Rack"? $this->rack : $rackem;
-		if($this->show_exceptions) $rackem::use_middleware("\Toby\ShowExceptions");
-		if($this->sessions) $rackem::use_middleware("\Rackem\Session\Cookie",$this->session_options());
-		if($this->csrf) $rackem::use_middleware("\Rackem\Protection\Csrf");
-		if($this->protection) \Rackem\Protection::protect(is_array($this->protection)? $this->protection : array(),$rackem);
-		foreach($this->middleware as $middleware)
-			call_user_func_array("$rackem::use_middleware",$middleware);
-		return $rackem::run($this);
+		$builder = new \Rackem\Builder($this, $this->middleware);
+		if($this->show_exceptions) $builder->use_middleware("\Toby\ShowExceptions");
+		if($this->sessions) $builder->use_middleware("\Rackem\Session\Cookie",$this->session_options());
+		if($this->csrf) $builder->use_middleware("\Rackem\Protection\Csrf");
+		if($this->protection) \Rackem\Protection::protect(is_array($this->protection)? $this->protection : array(), $builder);
+		return $with_rackem? \Rackem::run($builder) : $builder;
 	}
 
-	public function safe_set($key, $value)
-	{
-		if(!isset($this->settings->$key)) $this->set($key,$value);
-	}
-	
 	public function set($key,$value)
 	{
 		$this->settings->$key = $value;
 	}
-	
+
 	public function enable($key) { $this->set($key,true); }
 	public function disable($key) { $this->set($key, false); }
-	
+
 	public function status($value=null)
 	{
 		if(!is_null($value)) $this->response->status = $value;
@@ -246,7 +239,7 @@ class Base
 		if(isset($options["disposition"]) && $options["disposition"] == "attachment" || isset($options["filename"]))
 			$this->attachment();
 		elseif( isset($options["disposition"]) && $options["disposition"] == "inline") $this->response->header["Content-Disposition"] = "inline";
-		
+
 		$file = new \Rackem\File("");
 		$file->path = $path;
 		$result = $file->serving($this->env);
@@ -257,7 +250,7 @@ class Base
 		if(isset($options["last_modified"])) $this->last_modified($options["last_modified"]);
 		return $this->halt(array($result[0],$result[2]));
 	}
-	
+
 	public function url($address,$absolute = true,$script_name = true)
 	{
 		$uri = array();
@@ -267,39 +260,42 @@ class Base
 		return implode("/",array_map(function($v) { return ltrim($v,'/'); },$uri));
 	}
 
-	public function use_middleware($args)
+	public function use_middleware($middleware, $options = array())
 	{
-		$this->middleware[] = func_get_args();
+		$this->middleware[] = function($app) use ($middleware, $options) {
+			return is_object($middleware)? $middleware : new $middleware($app, $options);
+		};
 	}
-	
+
 	public function __get($prop) { return isset($this->$prop)? $this->settings->$prop : null; }
 	public function __isset($prop) { return isset($this->settings->$prop); }
 	public function __set($prop,$value) { $this->set($prop,$value); }
 	public function __unset($prop) { unset($this->settings->$prop); }
-	
+
 	//template engines
 	public function haml($template,$options=array(),$locals=array())
 	{
 		return $this->render("haml",$template,$options,$locals);
 	}
-	
+
 	public function mustache($template,$options=array(),$locals=array())
 	{
 		return $this->render("mustache",$template,$options,$locals);
 	}
-	
+
 	public function php($template,$options=array(),$locals=array())	
 	{
 		return $this->render("php",$template,$options,$locals);
 	}
-	
+
 	public function sass($template,$options=array(),$locals=array())
 	{
 		return $this->render("sass",$template,$options,$locals);
 	}
-	
-	//private
-	private function compile_template($engine,$data,$options,$views)
+
+//private
+
+	protected function compile_template($engine,$data,$options,$views)
 	{
 		$template = $this->find_template($views,$data,$engine);
 		if($template)
@@ -309,8 +305,8 @@ class Base
 		}
 		return $this->halt(500,"Template $data not found.");
 	}
-	
-	private function configure_environment()
+
+	protected function configure_environment()
 	{
 		if(!isset($this->settings->configure)) return;
 		foreach($this->settings->configure as $environment=>$blocks)
@@ -319,8 +315,8 @@ class Base
 				foreach($blocks as $block) $block($this);
 		}
 	}
-	
-	private function dispatch()
+
+	protected function dispatch()
 	{
 		if($this->method_override && isset($this->params->_method))
 			$this->env["REQUEST_METHOD"] = $this->params->_method;
@@ -340,8 +336,8 @@ class Base
 		}
 		$this->filters("after");
 	}
-	
-	private function filters($where)
+
+	protected function filters($where)
 	{
 		foreach($this->filters as $key=>$filter)
 		{
@@ -353,7 +349,7 @@ class Base
 			}
 		}
 	}
-	
+
 	protected function find_template($views,$name,$engine)
 	{
 		$ext = Template::engine_extension($engine);
@@ -361,7 +357,7 @@ class Base
 			if(file_exists("$views/$name.$possible_ext")) return "$views/$name.$possible_ext";
 		return false;
 	}
-	
+
 	protected function handle_error($e)
 	{
 		$this->response->body = array();
@@ -403,7 +399,7 @@ class Base
 		}
 		return $params;
 	}
-	
+
 	protected function process_condition($condition,$value)
 	{
 		if(array_key_exists($condition,$this->conditions)){
@@ -412,7 +408,7 @@ class Base
 		}
 		return false;
 	}
-	
+
 	private function process_route($pattern,$keys,$route)
 	{
 		$matches = array();
@@ -424,30 +420,26 @@ class Base
 		if($output = $route($this,$params)) $this->response->send($output);
 		return $output;
 	}
-	
+
 	protected function render($engine,$data,$options=array(),$locals=array(),$block=null)
 	{
-		//gimme options
 		$layout = isset($options["layout"])? $options["layout"] : "layout";
 		$layout_engine = isset($options["layout_engine"])? $options["layout_engine"] : $engine;
-		$layout_locals = array("app"=>$this);
-		//create template
-		$views = $this->settings->views;
-		$template = $this->compile_template($engine,$data,$options,$views);
+		$locals = array_merge($locals, array("app"=>$this));
+
+		$template = $this->compile_template($engine,$data,$options,$this->settings->views);
 		$output = "";
-		if($template) $output = $template->render(array_merge($locals,$layout_locals),$block);
+		if($template) $output = $template->render($locals,$block);
 		if($layout && is_null($block))
-			return $this->render($layout_engine,$layout,$options,array_merge($locals,$layout_locals),$output);
+			return $this->render($layout_engine,$layout,$options,$locals,$output);
 		return $output;
 	}
-	
+
 	protected function request_uri()
 	{
 		$path = $this->request->path_info();
-		//TODO: find a better way to handle old web servers
-		if(isset($this->params->q)) $path = $this->params->q;
-		if(empty($path)) $path = "/";
-		return $path;
+		// if(isset($this->params->q)) $path = $this->params->q;
+		return empty($path)? "/" : $path;
 	}
 
 	protected function reset()
@@ -464,12 +456,12 @@ class Base
 			$this->env["rack.session"]["flash"] = null;
 		}
 	}
-	
+
 	protected function route($method,$path,$block,$conditions=array())
 	{
 		return $this->routes[] = new Route($method,$path,$block,$conditions);
 	}
-	
+
 	protected function routes()
 	{
 		foreach($this->routes as $route)
@@ -479,6 +471,11 @@ class Base
 		}
 		$this->status(404);
 		throw new Halt('Not Found');
+	}
+
+	protected function safe_set($key, $value)
+	{
+		if(!isset($this->settings->$key)) $this->set($key,$value);
 	}
 
 	protected function serve_static()
