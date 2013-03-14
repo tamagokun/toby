@@ -1,0 +1,138 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans|Marko+One);
+
+body {
+	margin: 0;
+	background: #f7f7fa;
+	color: #666;
+	font: 100%/18px 'Open Sans', sans-serif;
+}
+
+a {
+	text-decoration: none;
+}
+
+h1 {
+	font-family: 'Marko One', sans-serif;
+	font-size: 2.5em;
+	text-align: center;
+}
+
+h2 {
+	border-top: 1px solid #dfe4ea;
+	padding: 1em 0 .5em 0;
+	margin: 1em 0 0 0;
+	font-size: 2em;
+	font-weight: normal;
+}
+
+h2, h2 a {
+	color: #999;
+}
+
+h3, h4 {
+	color: #777;
+}
+
+p {
+	line-height: 22px;
+}
+
+p a {
+	color: #586e75;
+	background: #FFF3CC;
+	padding: 1px 2px;
+	border-radius: 4px;
+	text-shadow: 0 1px rgba(255,255,255,0.5);
+	transition: all .4s;
+}
+
+p a:hover {
+	color: white;
+	background: #dac684;
+	text-shadow: 0 1px rgba(0,0,0,0.2);
+}
+
+p code {
+	background: #eef6ff;
+	border-radius: 4px;
+	color: #456;
+	text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.7);
+	box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+	padding: 1px 5px;
+	margin: 0 2px;
+	font-size: 0.8em;
+}
+
+#main pre {
+	border-radius: 4px;
+	padding: 1em;
+	background: #444;
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+	box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+h1 + p, h1 + p + p {
+	text-align: center;
+}
+
+img {
+	max-width: 100%;
+}
+
+a.spy {
+	display: block;
+}
+
+#nav {
+	display: none;
+}
+
+#nav ul {
+	position: fixed;
+	top: 2em;
+	list-style: none;
+	padding: 0 0 0 60px;
+}
+
+#nav ul li {
+	padding: 2px 0;
+}
+
+#nav li a {
+	color: #888;
+	text-shadow: 0 1px rgba(255,255,255,1);
+	padding: 6px 0 6px 10px;
+	width: 180px;
+	display: block;
+	font-size: 0.858em;
+	border-radius: 4px 0 0 4px;
+}
+
+#nav li a:hover,
+#nav li a.active {
+	background: white;
+	box-shadow: -1px 1px 3px rgba(64, 56, 41, .20);
+}
+
+#main {
+	background: white;
+	box-shadow: 0 1px 3px rgba(64, 56, 41, .20);
+	width: 100%;
+	padding: 2em;
+	margin: 2em 0;
+	box-sizing: border-box;
+}
+
+@media all and (min-width: 768px) {
+	#nav {
+		display: block;
+		float: left;
+		width: 250px;
+	}
+
+	#main {
+		margin-left: 250px;
+		width: 60%;
+	}
+
+}
