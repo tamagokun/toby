@@ -18,23 +18,33 @@ Toby works best with [Composer](http://getcomposer.org/). Add it to your `compos
 	"minimum-stability": "dev"
 }
 ```
-Install `composer install`
-Autoload `require 'vendor/autoload.php';`
 
-You can also load via PSR-0 by using `require 'toby.php';`
+```sh
+$ composer install
+```
 
 ## Hello World
 
 ```php
 <?php
+# config.php
+
+require 'vendor/autoload.php';
 
 $app = new \Toby\Base();
 $app->get('/',function() {
-    return "Hello World!";
+    return "<h1>Hello World!</h1>";
 });
-$app->run();
+return $app->run();
 ?>
 ```
+
+```sh
+$ vendor/bin/rackem
+$ open http://localhost:9393
+```
+
+## [Check out the manual](http://ripeworks.com/toby)
 
 ## What we have so far
 
@@ -42,7 +52,6 @@ $app->run();
  - route matching (`$app->get("/hello/:name");`)
  - render templates and layouts
  	 - currently supported: `php`,`mustache`,`markdown`,`haml`
- 	 - more to come!
  - conditions and filters
  - redirection
  - halting
