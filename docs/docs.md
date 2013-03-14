@@ -6,7 +6,7 @@ _Making PHP development fun again._
 
 The finest Leaf in the Southfarthing is also a web framework similar to Sinatra.
 
-Built on [Rack'em]().
+Built on [Rack'em](https://github.com/tamagokun/rackem).
 
 ## Getting Started
 
@@ -31,7 +31,7 @@ $ vendor/bin/rackem # serve app using rackem built-in web server
 
 ### Installation
 
-Use [Composer]():
+Use [Composer](http://getcomposer.org/doc/00-intro.md):
 
 ```json
 {
