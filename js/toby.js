@@ -2,7 +2,7 @@ var analytics=analytics||[];analytics.load=function(e){var t=document.createElem
 analytics.load("5g9bdq58dz");
 
 jQuery(document).ready(function($) {
-	if(!windoa.atob) window.atob = base64.decode;
+	if(!window.atob) window.atob = base64.decode;
 
 	//set up marked
 	marked.setOptions({
