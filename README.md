@@ -35,7 +35,7 @@ $app = new \Toby\Base();
 $app->get('/',function() {
     return "<h1>Hello World!</h1>";
 });
-$app->run();
+return $app->run();
 ?>
 ```
 
