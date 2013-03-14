@@ -1,8 +1,6 @@
 var analytics=analytics||[];analytics.load=function(e){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+e+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n);var r=function(e){return function(){analytics.push([e].concat(Array.prototype.slice.call(arguments,0)))}},i=["identify","track","trackLink","trackForm","trackClick","trackSubmit","pageview","ab","alias","ready"];for(var s=0;s<i.length;s++)analytics[i[s]]=r(i[s])};
 analytics.load("5g9bdq58dz");
 
-var sha = 'f7d530c199e7a017cb521b5356e41c42db598fce';
-
 jQuery(document).ready(function($) {
 	//set up marked
 	marked.setOptions({
@@ -23,7 +21,7 @@ jQuery(document).ready(function($) {
 	};
 	$(window).on('scroll', spy_nav);
 
-	$.ajax('https://api.github.com/repos/tamagokun/toby/git/blobs/'+sha, {
+	$.ajax('https://api.github.com/repos/tamagokun/toby/contents/docs/docs.md', {
 		dataType: "jsonp",
 		success: function(data) {
 			if(typeof data.data.content == "undefined") return;
