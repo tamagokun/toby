@@ -6,7 +6,7 @@ _Making PHP development fun again._
 
 The finest Leaf in the Southfarthing is also a web framework similar to Sinatra.
 
-Built on [Rack'em](https://github.com/tamagokun/rackem).
+[Built on Rack'em](https://github.com/tamagokun/rackem).
 
 ## Getting Started
 
@@ -177,11 +177,34 @@ By default Toby will use `./views` to look for templates, but you can specify a 
 $app->set("views", __DIR__."/templates");
 ```
 
-Options
-....
+The third parameter allows you to pass in local variables for use in your views.
+The key of the array value will be used as the local variable name:
 
-Available Template Languages
-...
+```php
+$app->get("/book/:id", function($app, $id) {
+	# will create $book in the view
+	return $app->php("book", array(), array("book"=>Book::find($id)));
+});
+```
+
+### Options for templates
+
+| *Option* | *Description* |
+| layout | Name of the layout to embed the view into. Default is `layout`. Use `false` to not use a layout. |
+| layout_engine | Override the engine used to render the view. |
+
+### Available Template Languages
+
+| *Template Language* | *Dependency* | *File Extension* |
+| Php | none | `.php` `.html` `.html.php` |
+| Haml | -- | `.haml` |
+| Mustache | -- | `.mustache` |
+| Markdown | -- | `.md` `.mkd` `.markdown` |
+| Jade | -- | |
+| Twig | -- | |
+
+For serving assets such as Sass, Less, or Coffeescript, Toby recommends using
+*insert Sprockets plugin here*.
 
 ## Filtering
 
