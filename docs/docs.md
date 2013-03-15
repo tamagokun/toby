@@ -202,8 +202,8 @@ $app->get("/book/:id", function($app, $id) {
 | Haml | -- | `.haml` |
 | Mustache | -- | `.mustache` |
 | Markdown | -- | `.md` `.mkd` `.markdown` |
-| Jade | -- | |
-| Twig | -- | |
+| Jade | -- | `.jade` |
+| Twig | -- | `.twig` `.html.twig`|
 
 For serving assets such as Sass, Less, or Coffeescript, Toby recommends using
 *insert Sprockets plugin here*.
@@ -334,11 +334,50 @@ $app->get("/", function($app) {
 });
 ```
 
+### Configuration Reference
+
+| *Option* | *Description* |
+| -------- | ------------- |
+| ... | ... |
+
 ## Uploads
+
+Files that are uploaded in a form will be exposed through the `params` variable
+just like GET and POST variables:
+
+```php
+$app->post('/profile/update', function($app) {
+
+	$image_name = $app->params->profile_image["name"];
+	$image = file_get_contents($app->params->profile_image["tmp_name"]);
+	# save the image
+	$handle = fopen(")$app->public_folder}/uploads/{$image_name}", 'w');
+	fwrite($handle, $image);
+	fclose($handle);
+	return "<h1>Success</h1>";
+});
+```
 
 ## Flash Messages
 
+Flash messaging is built into Toby:
 
+```php
+$app->post('/save', function($app) {
+	$post = new Post($app->params->post);
+	if($post->save())
+		$app->flash("info", "Post created.");
+	else
+		$app->flash("error", "Failed creating post.");
+	return $app->php('index');
+});
+```
 
+Then in your views you can display flash messages using the same method:
 
-
+```php
+<div id="flash">
+	<?php echo $app->flash("info"); ?>
+	<?php echo $app->flash("error"); ?>
+</div>
+```
