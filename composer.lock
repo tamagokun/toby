@@ -1,0 +1,72 @@
+{
+    "hash": "3e609422c0d1719719f42528bcb259a2",
+    "packages": [
+        {
+            "name": "rackem/rackem",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tamagokun/rackem.git",
+                "reference": "368481d7a3d9d8fdd28808ee43f3c3914b4c56e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tamagokun/rackem/zipball/368481d7a3d9d8fdd28808ee43f3c3914b4c56e0",
+                "reference": "368481d7a3d9d8fdd28808ee43f3c3914b4c56e0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec2": "dev-master"
+            },
+            "bin": [
+                "bin/rackem"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Rackem": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike Kruk",
+                    "email": "tamagokun@gmail.com",
+                    "homepage": "http://ripeworks.com"
+                }
+            ],
+            "description": "Rack for PHP",
+            "homepage": "http://github.com/tamagokun/rackem",
+            "keywords": [
+                "http",
+                "interface",
+                "middleware",
+                "rack",
+                "webserver"
+            ],
+            "time": "2013-03-15 20:53:38"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "rackem/rackem": 20
+    },
+    "platform": {
+        "php": ">=5.3.0"
+    },
+    "platform-dev": [
+
+    ]
+}
