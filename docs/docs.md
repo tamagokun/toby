@@ -347,11 +347,11 @@ just like GET and POST variables:
 
 ```php
 $app->post('/profile/update', function($app) {
-
+	# <input type="file" name="profile_image" />
 	$image_name = $app->params->profile_image["name"];
 	$image = file_get_contents($app->params->profile_image["tmp_name"]);
 	# save the image
-	$handle = fopen(")$app->public_folder}/uploads/{$image_name}", 'w');
+	$handle = fopen("{$app->public_folder}/uploads/{$image_name}", 'w');
 	fwrite($handle, $image);
 	fclose($handle);
 	return "<h1>Success</h1>";
