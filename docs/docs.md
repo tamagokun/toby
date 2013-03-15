@@ -190,12 +190,14 @@ $app->get("/book/:id", function($app, $id) {
 ### Options for templates
 
 | *Option* | *Description* |
+| -------- | ------------- |
 | layout | Name of the layout to embed the view into. Default is `layout`. Use `false` to not use a layout. |
 | layout_engine | Override the engine used to render the view. |
 
 ### Available Template Languages
 
 | *Template Language* | *Dependency* | *File Extension* |
+| ------------------- | ------------ | ---------------- |
 | Php | none | `.php` `.html` `.html.php` |
 | Haml | -- | `.haml` |
 | Mustache | -- | `.mustache` |
