@@ -369,7 +369,7 @@ class Base
 		{
 			$handler = new ShowExceptions($this);
 			$handler->env = $this->env;
-			if($this->dump_errors) $handler->handle_exception($this->env, $e);
+			if($this->dump_errors) $handler->log_exception($this->env, $e);
 			if($this->show_exceptions) return $handler->exception_handler($e, false);
 		}
 
