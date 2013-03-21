@@ -3,9 +3,10 @@ namespace Toby;
 
 class ShowExceptions extends \Rackem\ShowExceptions
 {
-	public function exception_handler($e)
+	public function exception_handler($e, $rethrow = true)
 	{
 		ob_get_clean();
+		if($rethrow) throw $e;
 		return $this->error_template($e);
 	}
 

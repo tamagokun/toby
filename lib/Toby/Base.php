@@ -370,7 +370,7 @@ class Base
 			$handler = new ShowExceptions($this);
 			$handler->env = $this->env;
 			if($this->dump_errors) $handler->handle_exception($this->env, $e);
-			if($this->show_exceptions) return $handler->exception_handler($e);
+			if($this->show_exceptions) return $handler->exception_handler($e, false);
 		}
 
 		if($this->is_not_found())
@@ -446,6 +446,8 @@ class Base
 	{
 		$this->safe_set("environment",isset($_SERVER['RACK_ENV'])? $_SERVER['RACK_ENV'] : "development");
 		$this->safe_set("show_exceptions", $this->is_development());
+		$this->safe_set("dump_errors", $this->is_development());
+		$this->safe_set("protection", true);
 		$this->safe_set("root", getcwd());
 		if(!$this->env) return;
 		$this->safe_set("views", "{$this->root}/views");
