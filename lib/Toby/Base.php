@@ -25,15 +25,8 @@ class Base
 		$this->filters[$where][] = new Route(array("GET","DELETE","HEAD","OPTIONS","PATCH","POST","PUT"),$path,$block,$args);
 	}
 
-	public function after($block)
-	{
-		$this->add_filter("after",func_get_args());
-	}
-
-	public function before($block)
-	{
-		$this->add_filter("before",func_get_args());
-	}
+	public function after($block) { $this->add_filter("after",func_get_args()); }
+	public function before($block) { $this->add_filter("before",func_get_args()); }
 
 	public function call($env)
 	{
@@ -211,6 +204,7 @@ class Base
 		if($this->sessions) $builder->use_middleware("\Rackem\Session\Cookie",$this->session_options());
 		if($this->csrf) $builder->use_middleware("\Rackem\Protection\Csrf");
 		if($this->protection) \Rackem\Protection::protect(is_array($this->protection)? $this->protection : array(), $builder);
+		if($this->logging) $builder->use_middleware("\Rackem\RackLogger");
 		return $with_rackem? \Rackem::run($builder) : $builder;
 	}
 
@@ -323,7 +317,7 @@ class Base
 		try
 		{
 			if($this->static) $this->serve_static();
-			$this->filters("before");
+			$this->process_filter("before");
 			$this->routes();
 		}catch(Halt $e)
 		{
@@ -334,21 +328,9 @@ class Base
 		{
 			return $this->response->send($this->handle_error($e));
 		}
-		$this->filters("after");
+		$this->process_filter("after");
 	}
 
-	protected function filters($where)
-	{
-		foreach($this->filters as $key=>$filter)
-		{
-			if($where !== $key) continue;
-			foreach($filter as $route)
-			{
-				list($pattern,$keys) = $route->compile();
-				$this->process_route($pattern,$keys,$route);
-			}
-		}
-	}
 
 	protected function find_template($views,$name,$engine)
 	{
@@ -402,14 +384,22 @@ class Base
 
 	protected function process_condition($condition,$value)
 	{
-		if(array_key_exists($condition,$this->conditions)){
-			$block = $this->conditions[$condition];
-			return $block($value);
-		}
-		return false;
+		if(!array_key_exists($condition, $this->conditions)) return false;
+		$block = $this->conditions[$condition];
+		return $block($value);
 	}
 
-	private function process_route($pattern,$keys,$route)
+	protected function process_filter($where)
+	{
+		if(!array_key_exists($where, $this->filters)) return;
+		foreach($this->filters[$where] as $route)
+		{
+			list($pattern,$keys) = $route->compile();
+			$this->process_route($pattern,$keys,$route);
+		}
+	}
+
+	protected function process_route($pattern,$keys,$route)
 	{
 		$matches = array();
 		if(!is_null($route->method) && !in_array($this->request->request_method(),$route->method)) return false;
@@ -447,6 +437,7 @@ class Base
 		$this->safe_set("environment",isset($_SERVER['RACK_ENV'])? $_SERVER['RACK_ENV'] : "development");
 		$this->safe_set("show_exceptions", $this->is_development());
 		$this->safe_set("dump_errors", $this->is_development());
+		$this->safe_set("logging", $this->is_development());
 		$this->safe_set("protection", true);
 		$this->safe_set("root", getcwd());
 		if(!$this->env) return;
