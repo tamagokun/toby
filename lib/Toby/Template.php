@@ -5,16 +5,16 @@ class Template
 {	
 	protected $file;
 	public static $engines = array(
-		"coffee" => array("engine"=>"","ext"=>array("coffee")),
-		"haml" => array("engine"=>"\\Toby\\Template\\Haml","ext"=>array("haml")),
-		"jade" => array("engine"=>"","ext"=>array("jade")),
-		"less" => array("engine"=>"","ext"=>array("less")),
-		"php" => array("engine"=>null,"ext"=>array("php","html","html.php")),
-		"markdown"	=> array("engine"=>"","ext"=>array("markdown","md","mkd")),
+		"coffee"   => array("engine"=>"","ext"=>array("coffee")),
+		"haml"     => array("engine"=>"\\Toby\\Template\\Haml","ext"=>array("haml")),
+		"jade"     => array("engine"=>"","ext"=>array("jade")),
+		"less"     => array("engine"=>"","ext"=>array("less")),
+		"php"      => array("engine"=>null,"ext"=>array("php","html","html.php")),
+		"markdown" => array("engine"=>"","ext"=>array("markdown","md","mkd")),
 		"mustache" => array("engine"=>"\\Toby\\Template\\Mustache","ext"=>array("mustache")),
-		"sass" => array("engine"=>"","ext"=>array("sass")),
-		"scss" => array("engine"=>"","ext"=>array("scss")),
-		"twig" => array("engine"=>"","ext"=>array("twig"))
+		"sass"     => array("engine"=>"","ext"=>array("sass")),
+		"scss"     => array("engine"=>"","ext"=>array("scss")),
+		"twig"     => array("engine"=>"\\Toby\\Template\\Twig","ext"=>array("twig"))
 	);
 	
 	public function __construct($file)
