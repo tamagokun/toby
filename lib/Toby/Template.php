@@ -3,7 +3,7 @@ namespace Toby;
 
 class Template
 {	
-	protected $file;
+	protected $file, $options;
 	public static $engines = array(
 		"coffee"   => array("engine"=>"","ext"=>array("coffee")),
 		"haml"     => array("engine"=>"\\Toby\\Template\\Haml","ext"=>array("haml")),
@@ -17,9 +17,10 @@ class Template
 		"twig"     => array("engine"=>"\\Toby\\Template\\Twig","ext"=>array("twig"))
 	);
 	
-	public function __construct($file)
+	public function __construct($file, $options=array())
 	{
 		$this->file = $file;
+		$this->options = $options;
 	}
 	
 	public function render($locals,$yield)

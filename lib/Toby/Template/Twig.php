@@ -7,7 +7,7 @@ class Twig extends \Toby\Template
 	{
 		if(!class_exists("\\Twig_Environment")) throw new \Rackem\Exception("Required class 'Twig_Environment' not found.");
 		$template = file_get_contents($this->file);
-		$engine = new \Twig_Environment(new \Twig_Loader_String());
+		$engine = new \Twig_Environment(new \Twig_Loader_String(), $this->options);
 		$locals["yield"] = $yield;
 		ob_start();
 		echo $engine->render($template,$locals);

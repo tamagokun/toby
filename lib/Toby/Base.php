@@ -294,8 +294,9 @@ class Base
 		$template = $this->find_template($views,$data,$engine);
 		if($template)
 		{
-			if($engine = Template::engine($engine)) return new $engine($template);
-			return new Template($template);
+			$options = isset($this->settings->$engine) ? $this->settings->$engine : array();
+			if($engine = Template::engine($engine)) return new $engine($template, $options);
+			return new Template($template, $options);
 		}
 		return $this->halt(500,"Template $data not found.");
 	}

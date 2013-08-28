@@ -7,7 +7,7 @@ class Mustache extends \Toby\Template
 	{
 		if(!class_exists("\\Mustache_Engine")) throw new \Rackem\Exception("Required class 'Mustache_Engine' not found.");
 		$template = file_get_contents($this->file);
-		$engine = new \Mustache_Engine();
+		$engine = new \Mustache_Engine($this->options);
 		$locals["yield"] = $yield;
 		ob_start();
 		echo $engine->render($template,$locals);
