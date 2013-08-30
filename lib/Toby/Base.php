@@ -286,6 +286,11 @@ class Base
 	{
 		return $this->render("sass",$template,$options,$locals);
 	}
+	
+	public function twig($template,$options=array(),$locals=array())
+	{
+		return $this->render("twig",$template,$options,$locals);
+	}
 
 //private
 
