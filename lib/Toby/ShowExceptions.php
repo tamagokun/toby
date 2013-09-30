@@ -20,7 +20,7 @@ class ShowExceptions extends \Rackem\ShowExceptions
 		}
 		if(empty($result))
 			return "<p>No $name.</p>";
-		return "<table><tbody><tr><th>Variable</th><th>Value</th></tr>$result</tbody></table>";
+		return "<table><tbody><tr><th width=\"20%\">Variable</th><th>Value</th></tr>$result</tbody></table>";
 	}
 
 	private function pretty_trace($e)
@@ -50,6 +50,7 @@ class ShowExceptions extends \Rackem\ShowExceptions
 		$exception = get_class($e);
 		$trace = $e->getTrace();
 		$location = $this->location(array_shift($trace));
+		$message = htmlentities($e->getMessage());
 		$path = isset($this->app->request)? $this->app->request->path_info() : "/";
 		$full_stack = $this->pretty_trace($e);
 		$env_stack = $this->pretty_array($env);
@@ -67,6 +68,7 @@ class ShowExceptions extends \Rackem\ShowExceptions
 		color: #525252;}
 	code {font-family: 'Lucida Console', monospace;}
 	h2 {font-style:italic;}
+	h2 pre {font-family: 'Lucida Grande','Lucida Sans Unicode','Garuda';}
 	h3 {text-shadow: 0 1px #fff;}
 	h2, h3 {padding: .5em 0;}
 	ul {list-style: none;}
@@ -76,7 +78,7 @@ class ShowExceptions extends \Rackem\ShowExceptions
 	#main p {padding: 10px 0; font-size: 0.786em; text-shadow: 0 1px #fff;}
 	#main ul {border:1px solid #e9e9e9; border-bottom: 0 none;}
 	#main li {font-size:0.858em; background: #ffffff;border-bottom:1px solid #e9e9e9;padding: 5px 0 5px 10px;}
-	table {border: 1px solid #e9e9e9; border-spacing: 0; border-bottom: 0 none; border-left: 0 none;}
+	table {border: 1px solid #e9e9e9; border-spacing: 0; border-bottom: 0 none; border-left: 0 none;width:100%;table-layout:fixed;word-wrap:break-word;}
 	table th, table td {font-size: 0.786em; padding: 3px 3px 3px 10px; background: #ffffff;
 		border: 1px solid #e9e9e9; border-top: 0 none; border-right: 0 none;}
 	table th {background: #f7f7f7;}
@@ -85,7 +87,7 @@ class ShowExceptions extends \Rackem\ShowExceptions
 <body>
 	<div id="header">
 		<h1><strong>{$exception}</strong> at <strong>{$path}</strong></h1>
-		<h2>{$e->getMessage()}</h2>
+		<h2><pre>{$message}</pre></h2>
 		<div id="summary">
 			<ul>
 				<li><strong>file:</strong> <code>{$e->getFile()}</code></li>
