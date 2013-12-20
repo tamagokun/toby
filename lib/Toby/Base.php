@@ -69,9 +69,10 @@ class Base
 
 	public function error()
 	{
-		$codes = (func_num_args() > 1)? array_shift(func_get_args()) : array("all");
+		$args = func_get_args();
+		$codes = (count($args) > 1)? array_shift($args) : array("all");
 		if(!is_array($codes)) $codes = array($codes);
-		$block = array_pop(func_get_args());
+		$block = array_pop($args);
 		foreach($codes as $code) $this->errors[$code] = $block;
 	}
 
