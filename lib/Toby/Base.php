@@ -351,8 +351,9 @@ class Base
 	{
 		$this->response->body = array();
 		$this->env['toby.error'] = $e;
-		if(!$this->is_client_error() && !$this->is_server_error())
-			$this->status(isset($e->status)? $e->status : 500);
+		if ($e->status) $this->status($e->status);
+		if (!$this->is_client_error() && !$this->is_server_error())
+			$this->status(500);
 
 		if($this->is_server_error())
 		{
