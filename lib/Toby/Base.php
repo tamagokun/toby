@@ -77,13 +77,17 @@ class Base
 	}
 
 	public function any($path) { return $this->on(null,func_get_args()); }
-	public function get($path) { return $this->on("GET",func_get_args()); }
 	public function delete($path) { return $this->on("DELETE",func_get_args()); }
 	public function head($path) { return $this->on("HEAD",func_get_args()); }
 	public function options($path) { return $this->on("OPTIONS",func_get_args()); }
 	public function patch($path) { return $this->on("PATCH",func_get_args()); }
 	public function post($path) { return $this->on("POST",func_get_args()); }
 	public function put($path) { return $this->on("PUT",func_get_args()); }
+	
+	public function get($path) {
+		$this->on("HEAD", func_get_args());
+		return $this->on("GET", func_get_args());
+	}
 
 	public function on($method, $args)
 	{
